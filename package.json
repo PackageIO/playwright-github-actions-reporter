@@ -1,0 +1,49 @@
+{
+  "name": "@therootsoft/playwright-github-actions-reporter",
+  "version": "1.0.1",
+  "type": "module",
+  "description": "GitHub Actions reporter for Playwright",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.40.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  },
+  "author": "Vadym Nastoiashchyi",
+  "license": "MIT",
+  "homepage": "https://github.com/TheRootSoft/playwright-github-actions-reporter#readme",
+  "bugs": {
+    "url": "https://github.com/TheRootSoft/playwright-github-actions-reporter/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheRootSoft/playwright-github-actions-reporter.git"
+  },
+  "keywords": [
+    "playwright",
+    "github",
+    "actions",
+    "reporter"
+  ]
+}

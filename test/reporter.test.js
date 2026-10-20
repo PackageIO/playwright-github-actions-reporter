@@ -1,0 +1,66 @@
+import assert from 'node:assert/strict';
+import { access, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import os from 'node:os';
+import path from 'node:path';
+import test from 'node:test';
+import GitHubActionsReporter from '../dist/index.js';
+
+const packageMetadata = createRequire(import.meta.url)('../package.json');
+
+test('prints its package name and version when the run begins', () => {
+	const reporter = new GitHubActionsReporter();
+	const originalWrite = process.stdout.write;
+	let output = '';
+	process.stdout.write = (chunk) => {
+		output += String(chunk);
+		return true;
+	};
+	try {
+		reporter.onBegin({}, { allTests: () => [] });
+	} finally {
+		process.stdout.write = originalWrite;
+	}
+
+	assert.equal(output, `${packageMetadata.name} v${packageMetadata.version}\n`);
+});
+
+test('writes only the result marker to the GitHub Actions summary on success', async () => {
+	const directory = await mkdtemp(path.join(os.tmpdir(), 'playwright-gh-reporter-'));
+	const summaryPath = path.join(directory, 'summary.md');
+	const previousGitHubActions = process.env.GITHUB_ACTIONS;
+	const previousSummaryPath = process.env.GITHUB_STEP_SUMMARY;
+	process.env.GITHUB_ACTIONS = 'true';
+	process.env.GITHUB_STEP_SUMMARY = summaryPath;
+	const reporter = new GitHubActionsReporter();
+	try {
+		await reporter.onEnd({ status: 'passed' });
+		assert.equal(await readFile(summaryPath, 'utf8'), 'result\n');
+	} finally {
+		if (previousGitHubActions === undefined) delete process.env.GITHUB_ACTIONS;
+		else process.env.GITHUB_ACTIONS = previousGitHubActions;
+		if (previousSummaryPath === undefined) delete process.env.GITHUB_STEP_SUMMARY;
+		else process.env.GITHUB_STEP_SUMMARY = previousSummaryPath;
+		await rm(directory, { recursive: true, force: true });
+	}
+});
+
+test('does not write the result marker for failed runs', async () => {
+	const directory = await mkdtemp(path.join(os.tmpdir(), 'playwright-gh-reporter-'));
+	const summaryPath = path.join(directory, 'summary.md');
+	const previousGitHubActions = process.env.GITHUB_ACTIONS;
+	const previousSummaryPath = process.env.GITHUB_STEP_SUMMARY;
+	process.env.GITHUB_ACTIONS = 'true';
+	process.env.GITHUB_STEP_SUMMARY = summaryPath;
+	const reporter = new GitHubActionsReporter();
+	try {
+		await reporter.onEnd({ status: 'failed' });
+		await assert.rejects(access(summaryPath));
+	} finally {
+		if (previousGitHubActions === undefined) delete process.env.GITHUB_ACTIONS;
+		else process.env.GITHUB_ACTIONS = previousGitHubActions;
+		if (previousSummaryPath === undefined) delete process.env.GITHUB_STEP_SUMMARY;
+		else process.env.GITHUB_STEP_SUMMARY = previousSummaryPath;
+		await rm(directory, { recursive: true, force: true });
+	}
+});
