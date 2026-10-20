@@ -7,6 +7,14 @@ import test from 'node:test';
 import GitHubActionsReporter from '../dist/index.js';
 
 const packageMetadata = createRequire(import.meta.url)('../package.json');
+const require = createRequire(import.meta.url);
+
+test('resolves the package name for Playwright reporter lookup', () => {
+	assert.equal(
+		require.resolve('@therootsoft/playwright-github-actions-reporter'),
+		require.resolve('../dist/index.js'),
+	);
+});
 
 test('prints its package name and version when the run begins', () => {
 	const reporter = new GitHubActionsReporter();

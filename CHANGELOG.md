@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-10-21
+### Fixed
+- Add a default export condition so Playwright can resolve the reporter by package name.
+
 ## [1.0.1] - 2026-10-20
 ### Changed
 - Keep reporter output minimal: print the package name and version at run start, then write `result` to the GitHub Actions job summary only after a successful run.
