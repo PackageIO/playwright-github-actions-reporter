@@ -1,6 +1,6 @@
 # @therootsoft/playwright-github-actions-reporter
 
-A minimal Playwright reporter that prints its package name and version before tests run. After a successful GitHub Actions run, it adds only `result` to the job summary as a success marker.
+A minimal Playwright reporter that prints its package name and version before tests run. After any GitHub Actions run, it adds a concise result to the job summary: `result` on success, or `result: <status>` otherwise.
 
 ## Install
 

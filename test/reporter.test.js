@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { access, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
@@ -53,22 +53,26 @@ test('writes only the result marker to the GitHub Actions summary on success', a
 	}
 });
 
-test('does not write the result marker for failed runs', async () => {
-	const directory = await mkdtemp(path.join(os.tmpdir(), 'playwright-gh-reporter-'));
-	const summaryPath = path.join(directory, 'summary.md');
+test('writes the run status to the GitHub Actions summary for every non-passing outcome', async () => {
 	const previousGitHubActions = process.env.GITHUB_ACTIONS;
 	const previousSummaryPath = process.env.GITHUB_STEP_SUMMARY;
-	process.env.GITHUB_ACTIONS = 'true';
-	process.env.GITHUB_STEP_SUMMARY = summaryPath;
-	const reporter = new GitHubActionsReporter();
 	try {
-		await reporter.onEnd({ status: 'failed' });
-		await assert.rejects(access(summaryPath));
+		process.env.GITHUB_ACTIONS = 'true';
+		for (const status of ['failed', 'timedout', 'interrupted']) {
+			const directory = await mkdtemp(path.join(os.tmpdir(), 'playwright-gh-reporter-'));
+			const summaryPath = path.join(directory, 'summary.md');
+			process.env.GITHUB_STEP_SUMMARY = summaryPath;
+			try {
+				await new GitHubActionsReporter().onEnd({ status });
+				assert.equal(await readFile(summaryPath, 'utf8'), `result: ${status}\n`);
+			} finally {
+				await rm(directory, { recursive: true, force: true });
+			}
+		}
 	} finally {
 		if (previousGitHubActions === undefined) delete process.env.GITHUB_ACTIONS;
 		else process.env.GITHUB_ACTIONS = previousGitHubActions;
 		if (previousSummaryPath === undefined) delete process.env.GITHUB_STEP_SUMMARY;
 		else process.env.GITHUB_STEP_SUMMARY = previousSummaryPath;
-		await rm(directory, { recursive: true, force: true });
 	}
 });
