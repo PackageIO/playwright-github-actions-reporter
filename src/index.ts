@@ -6,6 +6,7 @@ import type {
 	Reporter,
 	Suite,
 } from '@playwright/test/reporter';
+import { createReport } from './reporter.js';
 
 const summaryPath = process.env.GITHUB_STEP_SUMMARY;
 const isGitHubActions = process.env.GITHUB_ACTIONS;
@@ -20,7 +21,9 @@ export default class GitHubActionsReporter implements Reporter {
 
 	onBegin(_config: FullConfig, suite: Suite): void {
 		this.suite = suite;
-		process.stdout.write(`${packageMetadata.name} v${packageMetadata.version}\n`);
+		process.stdout.write(
+			`${packageMetadata.name} v${packageMetadata.version}\n`,
+		);
 	}
 
 	printsToStdio(): boolean {
@@ -29,31 +32,7 @@ export default class GitHubActionsReporter implements Reporter {
 
 	async onEnd(runResult: FullResult): Promise<void> {
 		if (isGitHubActions === 'true' && summaryPath) {
-			const counts = {
-				all: 0,
-				passed: 0,
-				failed: 0,
-				flaky: 0,
-				skipped: 0,
-			};
-
-			for (const test of this.suite?.allTests() ?? []) {
-				counts.all += 1;
-				const outcome = test.outcome();
-				if (outcome === 'expected') counts.passed += 1;
-				else if (outcome === 'unexpected') counts.failed += 1;
-				else if (outcome === 'flaky') counts.flaky += 1;
-				else counts.skipped += 1;
-			}
-			const report = [
-				'<h2>Test results</h2>',
-				`<p>Generated: ${new Date().toISOString()}</p>`,
-				'<table>',
-				'<thead><tr><th>All</th><th>Passed</th><th>Failed</th><th>Flaky</th><th>Skipped</th></tr></thead>',
-				`<tbody><tr><td>${counts.all}</td><td>${counts.passed}</td><td>${counts.failed}</td><td>${counts.flaky}</td><td>${counts.skipped}</td></tr></tbody>`,
-				'</table>',
-				'',
-			].join('\n');
+			const report = createReport(this.suite?.allTests() ?? []);
 			await appendFile(summaryPath, report, 'utf8');
 		}
 	}

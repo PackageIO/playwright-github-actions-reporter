@@ -28,6 +28,7 @@ At the start of each run, the reporter prints its package name and version.
 ```sh
 npm install
 npm test
+npm run format
 ```
 
-`npm test` generates the Playwright HTML report at `playwright-report/index.html` and the reporter summary at `test-results/reporter-preview.md`. Open the HTML report with `npx playwright show-report`; open the Markdown file with VS Code's Markdown preview. The summary includes test outcome counts and `result` for a passing run, or `result: <status>` otherwise.
+Run `npm run format` to format the TypeScript source, tests, and Playwright config with Biome. Use `npm run format:check` to verify formatting without changing files.
