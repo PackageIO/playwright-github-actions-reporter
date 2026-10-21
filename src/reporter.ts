@@ -29,7 +29,8 @@ export function createReport(
 
 	return `
 <h2>Test results</h2>
-<p>Generated <em>${formatDateTime(new Date())}</em> Execution time: <em>${(runResult.duration / 1000).toFixed(2)}s</em></p>
+<p>Generated <em>${formatDateTime(new Date())}</em></p>
+<p>Execution time: <em>${(runResult.duration / 1000).toFixed(2)}s</em></p>
 <table>
 	<thead>
 		<tr>
