@@ -24,6 +24,13 @@ const statusLabel = {
 	skipped: { emoji: '⏸️', text: 'Skipped' },
 } as const;
 
+const statusFilters = [
+	{ outcome: 'expected', label: 'Passed' },
+	{ outcome: 'unexpected', label: 'Failed' },
+	{ outcome: 'flaky', label: 'Flaky' },
+	{ outcome: 'skipped', label: 'Skipped' },
+] as const;
+
 function escapeHtml(value: string): string {
 	return value.replace(/[&<>"']/g, (character) => {
 		const entities: Record<string, string> = {
@@ -175,6 +182,23 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 		.join('\n');
 }
 
+function renderStatusFilters(tests: readonly TestCase[]): string {
+	const counts = countTests(tests);
+	const filters = [
+		`<details name="test-status-filter" open><summary>All specs (Clear filter) (${counts.all})</summary>${renderTestDetails(tests)}</details>`,
+		...statusFilters
+			.filter(({ outcome }) => counts[outcomeCountKey[outcome]] > 0)
+			.map(({ outcome, label }) => {
+				const filteredTests = tests.filter(
+					(test) => test.outcome() === outcome,
+				);
+				return `<details name="test-status-filter"><summary>${statusLabel[outcome].emoji} ${label} (${filteredTests.length})</summary>${renderTestDetails(filteredTests)}</details>`;
+			}),
+	];
+
+	return filters.join('\n');
+}
+
 function renderHeader(
 	tests: readonly TestCase[],
 	runResult: FullResult,
@@ -182,28 +206,10 @@ function renderHeader(
 	const counts = countTests(tests);
 
 	return `
+	<h2>Test results</h2>
+	<p>All: ${counts.all} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped}</p>
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>
-<p>Execution time: <em>🕒 ${(runResult.duration / 1000).toFixed(2)}s</em></p>
-<table>
-	<thead>
-		<tr>
-			<th>All</th>
-			<th>Passed</th>
-			<th>Failed</th>
-			<th>Flaky</th>
-			<th>Skipped</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>${counts.all}</td>
-			<td>${counts.passed}</td>
-			<td>${counts.failed}</td>
-			<td>${counts.flaky}</td>
-			<td>${counts.skipped}</td>
-		</tr>
-	</tbody>
-</table>
+<p>Execution time: <em> ${(runResult.duration / 1000).toFixed(2)}s</em></p>
 `;
 }
 
@@ -212,8 +218,7 @@ export function createReport(
 	runResult: FullResult,
 ): string {
 	return `
-<h2>Test results</h2>
 ${renderHeader(tests, runResult)}
-${renderTestDetails(tests)}
+${renderStatusFilters(tests)}
 `;
 }

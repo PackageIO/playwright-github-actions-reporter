@@ -34,9 +34,11 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 5354 } as FullResult);
 
-	expect(report.indexOf('<h2>Test summary</h2>')).toBeLessThan(
-		report.indexOf('<h2>Test results</h2>'),
+	expect(report).toContain('<h2>Test results</h2>');
+	expect(report).toContain(
+		'<p>All: 1 | Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0</p>',
 	);
+	expect(report).not.toContain('<table>');
 	expect(report).toContain(
 		'<summary>✅ storageState.spec.ts | <em>Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0</em> | 🕒 Duration: 5.35s</summary>',
 	);
@@ -44,7 +46,6 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		/<td><span title="Pass">✅<\/span> .*ui\/storageState\.spec\.ts &gt; setup storage state with cookies<\/td>/,
 	);
 	expect(report).toContain('🕒 5.354s');
-	expect(report).toContain('<p>Execution time: <em>🕒 5.35s</em></p>');
 	expect(report).toContain(
 		'<td></td>\n\t\t\t\t\t<td>linux / storageState</td>',
 	);
@@ -52,6 +53,12 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toContain('<th>Duration</th>');
 	expect(report).toContain('<td>linux / storageState</td>');
 	expect(report).not.toContain('<th>Status</th>');
+	expect(report).toContain(
+		'<summary>All specs (Clear filter) (1)</summary>',
+	);
+	expect(report).toContain('<summary>✅ Passed (1)</summary>');
+	expect(report).toContain('<details name="test-status-filter" open>');
+	expect(report).toContain('<details name="test-status-filter">');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
 		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',
