@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add Biome formatting with `npm run format` and `npm run format:check` scripts.
 - Add a pull request preview workflow with examples for passed, failed, skipped, and flaky test outcomes.
-- Add detailed HTML reports grouped by spec file and project, including outcome counts, durations, retries, tags, annotations, and collapsible error details.
+- Add detailed reports grouped by spec file and project, including outcome counts, durations, retries, tags, annotations, and collapsible error details.
 - Make HTTP and HTTPS links in annotation descriptions clickable.
 
 ### Changed

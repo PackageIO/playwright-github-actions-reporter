@@ -38,22 +38,20 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toContain(
 		'<p><b>Total: [1]    [Passed: 1  Failed: 0  Flaky: 0  Skipped: 0]</b></p>',
 	);
-	expect(report).toContain('<table style="margin-top: 0">');
+	expect(report).toContain('| Test | Duration | Retries | Tags | Project |');
 	expect(report).toContain(
 		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts    [passed: 1  failed: 0  flaky: 0  skipped: 0  duration: 5.35s]</summary>',
 	);
 	expect(report).toContain(
-		'<td valign="top"><span style="color: #1a7f37" title="Passed">✓</span>',
+		'| <span style="color: #1a7f37" title="Passed">✓</span>',
 	);
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
-	expect(report).toContain('<th>Test</th>');
-	expect(report).toContain('<th>Duration</th>');
-	expect(report).toContain('<td valign="top">5.354s</td>');
-	expect(report).toContain('<td valign="top">smoke, regression</td>');
-	expect(report).toContain('<td valign="top">linux / storageState</td>');
+	expect(report).toContain('| 5.354s |');
+	expect(report).toContain('| smoke, regression |');
+	expect(report).toContain('| linux / storageState |');
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
@@ -80,7 +78,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'<td valign="top"><span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary>Error details</summary><pre>Expected failure</pre></details></td>',
+		'| <span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary>Error details</summary><pre>Expected failure</pre></details> | 0.010s |  |  | Default |',
 	);
 	expect(report).toContain('<summary>Error details</summary>');
 	expect(report).not.toContain('colspan="5"><details>');

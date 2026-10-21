@@ -54,7 +54,7 @@ function formatAnnotation(description: string): string {
 	return description
 		.split(/(https?:\/\/[^\s<>"']+)/g)
 		.map((part) => {
-			const escapedPart = escapeHtml(part);
+			const escapedPart = escapeHtml(part).replace(/\|/g, '&#124;');
 			if (!/^https?:\/\//i.test(part)) return escapedPart;
 			return `<a href="${escapedPart}" rel="noopener noreferrer">${escapedPart}</a>`;
 		})
@@ -159,32 +159,17 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						? `<br><br><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details>`
 						: '';
 
-					return `<tr>
-					<td valign="top">${renderStatus(test.outcome())} ${escapeHtml(title)}${annotations}${errorText}</td>
-					<td valign="top">${(duration / 1000).toFixed(3)}s</td>
-					<td valign="top">${retries || ''}</td>
-					<td valign="top">${escapeHtml(test.tags.join(', '))}</td>
-					<td valign="top">${escapeHtml(group.project)}</td>
-				</tr>`;
+					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}    [passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</summary>
-<table style="margin-top: 0">
-	<thead>
-		<tr>
-			<th>Test</th>
-			<th>Duration</th>
-			<th>Retries</th>
-			<th>Tags</th>
-			<th>Project</th>
-		</tr>
-	</thead>
-	<tbody>
+
+| Test | Duration | Retries | Tags | Project |
+| --- | ---: | ---: | --- | --- |
 ${rows}
-</tbody>
-</table>
+
 </details>`;
 		})
 		.join('\n');
