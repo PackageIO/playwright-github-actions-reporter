@@ -160,18 +160,18 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						: '';
 
 					return `<tr>
-					<td>${renderStatus(test.outcome())} ${escapeHtml(title)}${annotations}${errorText}</td>
-					<td>${(duration / 1000).toFixed(3)}s</td>
-					<td>${retries || ''}</td>
-					<td>${escapeHtml(test.tags.join(', '))}</td>
-					<td>${escapeHtml(group.project)}</td>
+					<td valign="top">${renderStatus(test.outcome())} ${escapeHtml(title)}${annotations}${errorText}</td>
+					<td valign="top">${(duration / 1000).toFixed(3)}s</td>
+					<td valign="top">${retries || ''}</td>
+					<td valign="top">${escapeHtml(test.tags.join(', '))}</td>
+					<td valign="top">${escapeHtml(group.project)}</td>
 				</tr>`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}    [passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</summary>
-<table>
+<table style="margin-top: 0">
 	<thead>
 		<tr>
 			<th>Test</th>

@@ -36,14 +36,14 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('<h2>Test results</h2>');
 	expect(report).toContain(
-		'<h3>All: 1  Passed: 1  Failed: 0  Flaky: 0  Skipped: 0</h3>',
+		'<p><b>Total: [1]    [Passed: 1  Failed: 0  Flaky: 0  Skipped: 0]</b></p>',
 	);
-	expect(report).toContain('<table>');
+	expect(report).toContain('<table style="margin-top: 0">');
 	expect(report).toContain(
-		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts  passed: 1  failed: 0  flaky: 0  skipped: 0  duration: 5.35s</summary>',
+		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts    [passed: 1  failed: 0  flaky: 0  skipped: 0  duration: 5.35s]</summary>',
 	);
 	expect(report).toContain(
-		'<td><span style="color: #1a7f37" title="Passed">✓</span>',
+		'<td valign="top"><span style="color: #1a7f37" title="Passed">✓</span>',
 	);
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
@@ -51,9 +51,9 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	);
 	expect(report).toContain('<th>Test</th>');
 	expect(report).toContain('<th>Duration</th>');
-	expect(report).toContain('<td>5.354s</td>');
-	expect(report).toContain('<td>smoke, regression</td>');
-	expect(report).toContain('<td>linux / storageState</td>');
+	expect(report).toContain('<td valign="top">5.354s</td>');
+	expect(report).toContain('<td valign="top">smoke, regression</td>');
+	expect(report).toContain('<td valign="top">linux / storageState</td>');
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
@@ -80,7 +80,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'<td><span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary>Error details</summary><pre>Expected failure</pre></details></td>',
+		'<td valign="top"><span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary>Error details</summary><pre>Expected failure</pre></details></td>',
 	);
 	expect(report).toContain('<summary>Error details</summary>');
 	expect(report).not.toContain('colspan="5"><details>');

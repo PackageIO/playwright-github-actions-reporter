@@ -23,6 +23,10 @@ export default defineConfig({
 
 At the start of each run, the reporter prints its package name and version.
 
+## GitHub Actions Summary
+
+In GitHub Actions, the reporter appends a test report to the job summary for every run outcome. The report groups tests by spec file and project, with overall and per-group outcome counts and durations. Test rows include retries, tags, annotations, and collapsible error details. HTTP and HTTPS links in annotation descriptions are clickable.
+
 ## Development
 
 ```sh
