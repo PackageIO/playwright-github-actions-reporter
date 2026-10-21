@@ -68,7 +68,12 @@ test('strips ANSI colors from rendered errors', () => {
 		results: [
 			{
 				duration: 10,
-				errors: [{ message: '\u001b[31mExpected failure\u001b[39m' }],
+				errors: [
+					{
+						message:
+							'\u001b[31mExpected failure\u001b[39m\nReceived | value',
+					},
+				],
 			},
 		],
 		tags: [],
@@ -78,7 +83,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary>Error details</summary><pre>Expected failure</pre></details> | 0.010s |  |  | Default |',
+		'| <span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary>Error details</summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  | Default |',
 	);
 	expect(report).toContain('<summary>Error details</summary>');
 	expect(report).not.toContain('colspan="5"><details>');

@@ -156,7 +156,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.join('');
 
 					const errorText = errors
-						? `<br><br><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details>`
+						? `<br><br><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`
 						: '';
 
 					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
