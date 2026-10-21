@@ -12,7 +12,7 @@ if (process.env.GITHUB_ACTIONS !== 'true') {
 }
 
 export default defineConfig({
-	testDir: './test',
+	testDir: './_tests_',
 	reporter: [
 		['list'],
 		['./dist/index.js'],
