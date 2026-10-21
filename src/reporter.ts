@@ -156,7 +156,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.join('');
 
 					const errorText = errors
-						? `<br><br><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`
+						? `<br><br><details><summary><em>Error details</em></summary><pre>${escapeHtml(stripAnsi(errors)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`
 						: '';
 
 					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
@@ -164,7 +164,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 				.join('\n');
 
 			return `<details>
-<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}    <em>[passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
+<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong>    <em>[passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
 
 | Test | Duration | Retries | Tags | Project |
 | --- | ---: | ---: | --- | --- |
@@ -183,9 +183,8 @@ function renderHeader(
 
 	return `
 <h2>Test results</h2>
-<p>Total: [${counts.all}]    <em>[Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</em></p>
-<p>Generated: <em>${formatDateTime(new Date())}</em></p>
-<p>Execution time: <em> ${(runResult.duration / 1000).toFixed(2)}s</em></p>
+<p><strong>Total: [${counts.all}]</strong>    <em>[Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</em></p>
+<p>Generated: ${formatDateTime(new Date())}    Execution time: ${(runResult.duration / 1000).toFixed(2)}s</p>
 `;
 }
 
