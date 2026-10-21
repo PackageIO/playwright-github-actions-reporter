@@ -1,7 +1,9 @@
 import { createRequire } from 'node:module';
 import { expect, test } from '@playwright/test';
+import type { FullResult } from '@playwright/test/reporter';
 import GitHubActionsReporter from '../dist/index.js';
 import { formatDateTime } from '../dist/utils/date.js';
+import { createReport } from '../dist/reporter.js';
 
 const require = createRequire(import.meta.url);
 const packageMetadata = createRequire(import.meta.url)('../package.json');
@@ -9,6 +11,12 @@ const packageMetadata = createRequire(import.meta.url)('../package.json');
 test('formats date and time in UTC', () => {
 	expect(formatDateTime(new Date('2026-10-21T08:44:58.469Z'))).toBe(
 		'2026-10-21/08:44:58',
+	);
+});
+
+test('includes total execution time in the report', () => {
+	expect(createReport([], { duration: 1250 } as FullResult)).toContain(
+		'<strong>Total execution time:</strong> 1.25s',
 	);
 });
 

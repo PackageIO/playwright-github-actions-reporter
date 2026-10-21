@@ -32,7 +32,7 @@ export default class GitHubActionsReporter implements Reporter {
 
 	async onEnd(runResult: FullResult): Promise<void> {
 		if (isGitHubActions === 'true' && summaryPath) {
-			const report = createReport(this.suite?.allTests() ?? []);
+			const report = createReport(this.suite?.allTests() ?? [], runResult);
 			await appendFile(summaryPath, report, 'utf8');
 		}
 	}

@@ -1,4 +1,4 @@
-import type { TestCase } from '@playwright/test/reporter';
+import type { FullResult, TestCase } from '@playwright/test/reporter';
 import { formatDateTime } from './utils/date.js';
 import { outcomeCountKey } from './utils/outcome.js';
 
@@ -10,7 +10,10 @@ export type TestCounts = {
 	skipped: number;
 };
 
-export function createReport(tests: readonly TestCase[]): string {
+export function createReport(
+	tests: readonly TestCase[],
+	runResult: FullResult,
+): string {
 	const counts: TestCounts = {
 		all: 0,
 		passed: 0,
@@ -26,7 +29,7 @@ export function createReport(tests: readonly TestCase[]): string {
 
 	return `
 <h2>Test results</h2>
-<p><em><strong>Generated:</strong> ${formatDateTime(new Date())}</em></p>
+<p><em><strong>Generated:</strong> ${formatDateTime(new Date())}</em> <strong>Execution time:</strong> ${(runResult.duration / 1000).toFixed(2)}s</p>
 <table>
 	<thead>
 		<tr>
