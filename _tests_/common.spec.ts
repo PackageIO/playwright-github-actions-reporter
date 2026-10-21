@@ -17,6 +17,7 @@ test('formats date and time in UTC', () => {
 test('renders detailed test rows grouped by project and spec file', () => {
 	const testCase = {
 		annotations: [
+			{ type: 'skip' },
 			{
 				type: 'rp:setDescription',
 				description: 'XRAY link: https://example.test/case/1',
@@ -53,6 +54,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toContain('| 5.354s |');
 	expect(report).toContain('| smoke, regression |');
 	expect(report).toContain('| linux / storageState |');
+	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(

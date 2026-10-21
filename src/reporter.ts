@@ -150,12 +150,19 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.filter((error) => error.trim().length > 0);
 					const annotations = test.annotations
 						.map(
-							(annotation) =>
-								`<br><strong>${escapeTableCell(annotation.type)}</strong>${
+							(annotation) => {
+								if (annotation.type === 'skip') {
+									return annotation.description
+										? `<br>${formatAnnotation(annotation.description)}`
+										: '';
+								}
+
+								return `<br><strong>${escapeTableCell(annotation.type)}</strong>${
 									annotation.description
 										? `: ${formatAnnotation(annotation.description)}`
 										: ''
-								}`,
+								}`;
+							},
 						)
 						.join('');
 
