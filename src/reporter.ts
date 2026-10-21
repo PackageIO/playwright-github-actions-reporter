@@ -100,6 +100,10 @@ function countTests(tests: readonly TestCase[]): TestCounts {
 	return counts;
 }
 
+function renderOutcomeCounts(counts: TestCounts): string {
+	return `Passed: ${counts.passed} · Failed: ${counts.failed} · Flaky: ${counts.flaky} · Skipped: ${counts.skipped}`;
+}
+
 function renderTestDetails(tests: readonly TestCase[]): string {
 	return groupTests(tests)
 		.map((group) => {
@@ -164,7 +168,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 				.join('\n');
 
 			return `<details>
-<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong>    <em>[passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
+<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
 
 | Test | Duration | Retries | Tags | Project |
 | --- | ---: | ---: | --- | --- |
@@ -182,9 +186,11 @@ function renderHeader(
 	const counts = countTests(tests);
 
 	return `
-<h2>Test results</h2>
-<p><strong>Total: [${counts.all}]</strong>    <em>[Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</em></p>
-<p>Generated: ${formatDateTime(new Date())}    Execution time: ${(runResult.duration / 1000).toFixed(2)}s</p>
+## Test results
+
+**Total: [${counts.all}]** · *[${renderOutcomeCounts(counts)}]*
+
+Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s
 `;
 }
 

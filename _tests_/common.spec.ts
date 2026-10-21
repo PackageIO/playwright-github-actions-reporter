@@ -34,20 +34,18 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 5354 } as FullResult);
 
-	expect(report).toContain('<h2>Test results</h2>');
+	expect(report).toContain('## Test results');
 	expect(report).toContain(
-		'<p><strong>Total: [1]</strong>    <em>[Passed: 1  Failed: 0  Flaky: 0  Skipped: 0]</em></p>',
+		'**Total: [1]** · *[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0]*',
 	);
 	expect(report).toMatch(
-		/<p>Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2}    Execution time: 5\.35s<\/p>/,
+		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5\.35s/,
 	);
 	expect(report).toContain('| Test | Duration | Retries | Tags | Project |');
 	expect(report).toContain(
-		'<summary><strong><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts</strong>    <em>[passed: 1  failed: 0  flaky: 0  skipped: 0  duration: 5.35s]</em></summary>',
+		'<summary><strong><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts</strong> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5.35s]</em></summary>',
 	);
-	expect(report).toContain(
-		'| <span style="color: #1a7f37" title="Passed">✓</span>',
-	);
+	expect(report).toContain('| <span style="color: #1a7f37" title="Passed">✓</span>');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
@@ -89,9 +87,7 @@ test('strips ANSI colors from rendered errors', () => {
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
-	expect(report).toContain(
-		'<span style="color: #cf222e" title="Failed">✗</span>',
-	);
+	expect(report).toContain('<span style="color: #cf222e" title="Failed">✗</span>');
 	expect(report).not.toContain('**FAIL**');
 	expect(report).not.toContain('\u001b');
 });
