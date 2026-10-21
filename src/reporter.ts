@@ -18,10 +18,10 @@ type TestGroup = {
 };
 
 const statusLabel = {
-	expected: { emoji: '✅', text: 'Pass' },
-	unexpected: { emoji: '❌', text: 'Fail' },
-	flaky: { emoji: '⚠️', text: 'Flaky' },
-	skipped: { emoji: '⏸️', text: 'Skipped' },
+	expected: { character: '✓', text: 'PASS' },
+	unexpected: { character: '✗', text: 'FAIL' },
+	flaky: { character: '↻', text: 'FLAKY' },
+	skipped: { character: '◦', text: 'SKIP' },
 } as const;
 
 function escapeHtml(value: string): string {
@@ -35,6 +35,14 @@ function escapeHtml(value: string): string {
 		};
 		return entities[character];
 	});
+}
+
+function escapeTableCell(value: string): string {
+	return escapeHtml(value).replace(/\|/g, '&#124;').replace(/\r?\n/g, '<br>');
+}
+
+function stripAnsi(value: string): string {
+	return value.replace(/\u001B\[[0-?]*[ -/]*[@-~]/g, '');
 }
 
 function formatAnnotation(description: string): string {
@@ -131,46 +139,28 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.map((error) => error.message ?? error.value ?? error.stack ?? '')
 						.filter(Boolean)
 						.join('\n');
-					const annotations = test.annotations.length
-						? `<tr><td colspan="6"><ul>${test.annotations
-								.map(
-									(annotation) =>
-										`<li><strong>${escapeHtml(annotation.type)}</strong>${
-											annotation.description
-												? `: ${formatAnnotation(annotation.description)}`
-												: ''
-										}</li>`,
-								)
-								.join('')}</ul></td></tr>`
-						: '';
+					const annotations = test.annotations
+						.map(
+							(annotation) =>
+								`<br><strong>${escapeTableCell(annotation.type)}</strong>${
+									annotation.description
+										? `: ${formatAnnotation(annotation.description)}`
+										: ''
+								}`,
+						)
+						.join('');
 
-					return `${annotations}<tr>
-					<td><span title="${statusLabel[test.outcome()].text}">${statusLabel[test.outcome()].emoji}</span> ${escapeHtml(title)}</td>
-					<td>🕒 ${(duration / 1000).toFixed(3)}s</td>
-					<td>${retries || ''}</td>
-					<td>${escapeHtml(test.tags.join(', '))}</td>
-					<td>${escapeHtml(errors).replace(/\n/g, '<br>')}</td>
-					<td>${escapeHtml(group.project)}</td>
-				</tr>`;
+					return `| **${statusLabel[test.outcome()].character} ${statusLabel[test.outcome()].text}** ${escapeTableCell(title)}${annotations} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(stripAnsi(errors))} | ${escapeTableCell(group.project)} |`;
 				})
 				.join('\n');
 
-			return `<details><summary>${groupStatus.emoji} ${escapeHtml(basename(group.file))} | <em>Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped}</em> | 🕒 Duration: ${(duration / 1000).toFixed(2)}s</summary><br>
-<table role="table">
-	<thead>
-		<tr>
-			<th>Test</th>
-			<th>Duration</th>
-			<th>Retries</th>
-			<th>Tags</th>
-			<th>Error</th>
-			<th>Project</th>
-		</tr>
-	</thead>
-	<tbody>
-		${rows}
-	</tbody>
-</table></details>`;
+			return `<details>
+<summary><strong>${groupStatus.character} ${groupStatus.text}</strong> ${escapeHtml(basename(group.file))} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped} | Duration: ${(duration / 1000).toFixed(2)}s</summary>
+
+| Test | Duration | Retries | Tags | Error | Project |
+| --- | ---: | ---: | --- | --- | --- |
+${rows}
+</details>`;
 		})
 		.join('\n');
 }

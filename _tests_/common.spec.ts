@@ -40,24 +40,45 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	);
 	expect(report).not.toContain('<table>');
 	expect(report).toContain(
-		'<summary>✅ storageState.spec.ts | <em>Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0</em> | 🕒 Duration: 5.35s</summary>',
+		'<summary><strong>✓ PASS</strong> storageState.spec.ts | Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0 | Duration: 5.35s</summary>',
 	);
-	expect(report).toMatch(
-		/<td><span title="Pass">✅<\/span> .*ui\/storageState\.spec\.ts &gt; setup storage state with cookies<\/td>/,
-	);
-	expect(report).toContain('🕒 5.354s');
+	expect(report).toContain('| **✓ PASS**');
 	expect(report).toContain(
-		'<td></td>\n\t\t\t\t\t<td>linux / storageState</td>',
+		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
-	expect(report).toContain('<th>Error</th>\n\t\t\t<th>Project</th>');
-	expect(report).toContain('<th>Duration</th>');
-	expect(report).toContain('<td>linux / storageState</td>');
-	expect(report).not.toContain('<th>Status</th>');
+	expect(report).toContain(
+		'| Test | Duration | Retries | Tags | Error | Project |',
+	);
+	expect(report).toContain(
+		'| 5.354s |  | smoke, regression |  | linux / storageState |',
+	);
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
 		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',
 	);
+});
+
+test('strips ANSI colors from rendered errors', () => {
+	const failedTest = {
+		annotations: [],
+		location: { file: 'error.spec.ts' },
+		outcome: () => 'unexpected',
+		parent: { project: () => ({ name: 'Default' }) },
+		results: [
+			{
+				duration: 10,
+				errors: [{ message: '\u001b[31mExpected failure\u001b[39m' }],
+			},
+		],
+		tags: [],
+		titlePath: () => ['error.spec.ts', 'fails cleanly'],
+	} as unknown as TestCase;
+	const report = createReport([failedTest], { duration: 10 } as FullResult);
+
+	expect(report).toContain('Expected failure');
+	expect(report).toContain('| **✗ FAIL**');
+	expect(report).not.toContain('\u001b');
 });
 
 test('resolves the package name for Playwright reporter lookup', () => {
