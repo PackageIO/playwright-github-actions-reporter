@@ -40,17 +40,20 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	);
 	expect(report).not.toContain('<table>');
 	expect(report).toContain(
-		'<summary><strong>✓ PASS</strong> storageState.spec.ts | Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0 | Duration: 5.35s</summary>',
+		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts | Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0 | Duration: 5.35s</summary>',
 	);
-	expect(report).toContain('| **✓ PASS**');
+	expect(report).toContain(
+		'| <span style="color: #1a7f37" title="Passed">✓</span>',
+	);
+	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
 	expect(report).toContain(
-		'| Test | Duration | Retries | Tags | Error | Project |',
+		'| Test | Duration | Retries | Tags | Project |',
 	);
 	expect(report).toContain(
-		'| 5.354s |  | smoke, regression |  | linux / storageState |',
+		'| 5.354s |  | smoke, regression | linux / storageState |',
 	);
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
@@ -77,7 +80,11 @@ test('strips ANSI colors from rendered errors', () => {
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
 	expect(report).toContain('Expected failure');
-	expect(report).toContain('| **✗ FAIL**');
+	expect(report).toContain('| ↳ **Error:** Expected failure | | | | |');
+	expect(report).toContain(
+		'<span style="color: #cf222e" title="Failed">✗</span>',
+	);
+	expect(report).not.toContain('**FAIL**');
 	expect(report).not.toContain('\u001b');
 });
 

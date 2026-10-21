@@ -18,10 +18,10 @@ type TestGroup = {
 };
 
 const statusLabel = {
-	expected: { character: '✓', text: 'PASS' },
-	unexpected: { character: '✗', text: 'FAIL' },
-	flaky: { character: '↻', text: 'FLAKY' },
-	skipped: { character: '◦', text: 'SKIP' },
+	expected: { character: '✓', color: '#1a7f37', title: 'Passed' },
+	unexpected: { character: '✗', color: '#cf222e', title: 'Failed' },
+	flaky: { character: '↻', color: '#bf8700', title: 'Flaky' },
+	skipped: { character: '○', color: '#6e7781', title: 'Skipped' },
 } as const;
 
 function escapeHtml(value: string): string {
@@ -43,6 +43,11 @@ function escapeTableCell(value: string): string {
 
 function stripAnsi(value: string): string {
 	return value.replace(/\u001B\[[0-?]*[ -/]*[@-~]/g, '');
+}
+
+function renderStatus(outcome: keyof typeof statusLabel): string {
+	const status = statusLabel[outcome];
+	return `<span style="color: ${status.color}" title="${status.title}">${status.character}</span>`;
 }
 
 function formatAnnotation(description: string): string {
@@ -108,15 +113,15 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 					),
 				0,
 			);
-			const groupStatus = group.tests.some(
+			const groupOutcome = group.tests.some(
 				(test) => test.outcome() === 'unexpected',
 			)
-				? statusLabel.unexpected
+				? 'unexpected'
 				: group.tests.some((test) => test.outcome() === 'flaky')
-					? statusLabel.flaky
+					? 'flaky'
 					: group.tests.every((test) => test.outcome() === 'skipped')
-						? statusLabel.skipped
-						: statusLabel.expected;
+						? 'skipped'
+						: 'expected';
 			const rows = group.tests
 				.map((test) => {
 					const titleParts = test
@@ -150,15 +155,19 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| **${statusLabel[test.outcome()].character} ${statusLabel[test.outcome()].text}** ${escapeTableCell(title)}${annotations} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(stripAnsi(errors))} | ${escapeTableCell(group.project)} |`;
+					const errorRow = errors
+						? `\n| ↳ **Error:** ${escapeTableCell(stripAnsi(errors))} | | | | |`
+						: '';
+
+					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |${errorRow}`;
 				})
 				.join('\n');
 
 			return `<details>
-<summary><strong>${groupStatus.character} ${groupStatus.text}</strong> ${escapeHtml(basename(group.file))} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped} | Duration: ${(duration / 1000).toFixed(2)}s</summary>
+<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped} | Duration: ${(duration / 1000).toFixed(2)}s</summary>
 
-| Test | Duration | Retries | Tags | Error | Project |
-| --- | ---: | ---: | --- | --- | --- |
+| Test | Duration | Retries | Tags | Project |
+| --- | ---: | ---: | --- | --- |
 ${rows}
 </details>`;
 		})
