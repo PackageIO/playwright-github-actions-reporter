@@ -42,7 +42,8 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toMatch(
 		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5\.35s/,
 	);
-	expect(report).toContain('| Status | Test | Duration | Retries | Tags | Project |');
+	expect(report).toMatch(/Execution time: 5\.35s\*\n\n---/);
+	expect(report).toContain('| Status | Test | Duration | Retries | Tags |');
 	expect(report).toContain(
 		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5.35s]</em></summary>',
 	);
@@ -53,7 +54,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	);
 	expect(report).toContain('| 5.354s |');
 	expect(report).toContain('| smoke, regression |');
-	expect(report).toContain('| linux / storageState |');
+	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
@@ -85,7 +86,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">✗</span> · Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  | Default |',
+		'| <span title="Failed">✗</span> · Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
