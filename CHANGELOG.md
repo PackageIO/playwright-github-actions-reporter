@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add Biome formatting with `npm run format` and `npm run format:check` scripts.
+- Add a pull request preview workflow with examples for passed, failed, skipped, and flaky test outcomes.
 
 ### Changed
 - Format the generated report timestamp as `YYYY-MM-DD/HH:mm:ss` in UTC.
