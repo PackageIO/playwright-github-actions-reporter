@@ -156,7 +156,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.join('');
 
 					const errorText = errors
-						? `<br><strong>Error:</strong> ${escapeTableCell(stripAnsi(errors))}`
+						? `<br><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details>`
 						: '';
 
 					return `<tr>
@@ -170,7 +170,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 				.join('\n');
 
 			return `<details>
-<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}  passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s</summary>
+<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}    [passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</summary>
 
 <table>
 	<thead>
@@ -199,7 +199,7 @@ function renderHeader(
 
 	return `
 <h2>Test results</h2>
-<h3>All: ${counts.all}  Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}</h3>
+<p><b>Total: ${counts.all}    [Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</b></p>
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>
 <p>Execution time: <em> ${(runResult.duration / 1000).toFixed(2)}s</em></p>
 `;

@@ -80,9 +80,9 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'<td><span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><strong>Error:</strong> Expected failure</td>',
+		'<td><span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><details><summary>Error details</summary><pre>Expected failure</pre></details></td>',
 	);
-	expect(report).not.toContain('<summary>Error details</summary>');
+	expect(report).toContain('<summary>Error details</summary>');
 	expect(report).not.toContain('colspan="5"><details>');
 	expect(report).toContain(
 		'<span style="color: #cf222e" title="Failed">✗</span>',
