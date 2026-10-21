@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-10-21
+### Changed
+- Rename the npm package scope to `@packageio` and update repository links to the `PackageIO` organization.
+
 ## [1.0.3] - 2026-10-21
 ### Changed
 - Write a concise result to the GitHub Actions job summary for every run status, including failures, timeouts, and interruptions.

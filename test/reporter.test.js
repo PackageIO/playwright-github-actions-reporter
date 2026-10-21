@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url);
 
 test('resolves the package name for Playwright reporter lookup', () => {
 	assert.equal(
-		require.resolve('@therootsoft/playwright-github-actions-reporter'),
+		require.resolve('@packageio/playwright-github-actions-reporter'),
 		require.resolve('../dist/index.js'),
 	);
 });
