@@ -164,7 +164,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 				.join('\n');
 
 			return `<details>
-<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}    [passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</summary>
+<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}    <em>[passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
 
 | Test | Duration | Retries | Tags | Project |
 | --- | ---: | ---: | --- | --- |
@@ -183,7 +183,7 @@ function renderHeader(
 
 	return `
 <h2>Test results</h2>
-<p><b>Total: [${counts.all}]    [Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</b></p>
+<p>Total: [${counts.all}]    <em>[Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</em></p>
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>
 <p>Execution time: <em> ${(runResult.duration / 1000).toFixed(2)}s</em></p>
 `;

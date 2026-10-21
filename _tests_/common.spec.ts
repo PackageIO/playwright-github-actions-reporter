@@ -36,11 +36,11 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('<h2>Test results</h2>');
 	expect(report).toContain(
-		'<p><b>Total: [1]    [Passed: 1  Failed: 0  Flaky: 0  Skipped: 0]</b></p>',
+		'<p>Total: [1]    <em>[Passed: 1  Failed: 0  Flaky: 0  Skipped: 0]</em></p>',
 	);
 	expect(report).toContain('| Test | Duration | Retries | Tags | Project |');
 	expect(report).toContain(
-		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts    [passed: 1  failed: 0  flaky: 0  skipped: 0  duration: 5.35s]</summary>',
+		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts    <em>[passed: 1  failed: 0  flaky: 0  skipped: 0  duration: 5.35s]</em></summary>',
 	);
 	expect(report).toContain(
 		'| <span style="color: #1a7f37" title="Passed">✓</span>',
