@@ -116,7 +116,7 @@ test('renders each test error in a numbered collapsible section', () => {
 		'<summary><em>Error details (retry 1)</em></summary><pre>Second failure</pre></details>',
 	);
 	expect(report).toContain(
-		'</details><br><details><summary><em>Error details (retry 1)</em></summary>',
+		'</details><details><summary><em>Error details (retry 1)</em></summary>',
 	);
 });
 

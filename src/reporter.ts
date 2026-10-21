@@ -161,7 +161,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 					const errorText = errors
 						.map(
 							(error, index) =>
-								`${index === 0 ? '<br><br>' : '<br>'}<details><summary><em>Error details${index > 0 ? ` (retry ${index})` : ''}</em></summary><pre>${escapeHtml(stripAnsi(error)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
+								`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${index > 0 ? ` (retry ${index})` : ''}</em></summary><pre>${escapeHtml(stripAnsi(error)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
 						)
 						.join('');
 
