@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-10-21
+### Added
+- Add a dedicated status column with an icon and text label for each test.
+
+### Changed
+- Show the project name in each spec group heading instead of repeating it in the test table.
+- Improve error visibility with collapsible, retry-specific error details.
+- Remove inline status colors and separate report metadata from test details with a divider.
+
 ## [1.2.0] - 2026-10-21
 ### Added
 - Add Biome formatting with `npm run format` and `npm run format:check` scripts.
