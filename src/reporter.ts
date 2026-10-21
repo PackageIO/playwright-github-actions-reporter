@@ -18,10 +18,10 @@ type TestGroup = {
 };
 
 const statusLabel = {
-	expected: { character: '✓', color: '#1a7f37', title: 'Passed' },
-	unexpected: { character: '✗', color: '#cf222e', title: 'Failed' },
-	flaky: { character: '↻', color: '#bf8700', title: 'Flaky' },
-	skipped: { character: '○', color: '#6e7781', title: 'Skipped' },
+	expected: { character: '✓', title: 'Passed' },
+	unexpected: { character: '✗', title: 'Failed' },
+	flaky: { character: '⚠', title: 'Flaky' },
+	skipped: { character: '⊘', title: 'Skipped' },
 } as const;
 
 function escapeHtml(value: string): string {
@@ -47,7 +47,11 @@ function stripAnsi(value: string): string {
 
 function renderStatus(outcome: keyof typeof statusLabel): string {
 	const status = statusLabel[outcome];
-	return `<span style="color: ${status.color}" title="${status.title}">${status.character}</span>`;
+	return `<span title="${status.title}">${status.character}</span>`;
+}
+
+function renderTestStatus(outcome: keyof typeof statusLabel): string {
+	return `${renderStatus(outcome)} ${statusLabel[outcome].title}`;
 }
 
 function formatAnnotation(description: string): string {
@@ -146,32 +150,42 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 					const errors = test.results
 						.flatMap((result) => result.errors)
 						.map((error) => error.message ?? error.value ?? error.stack ?? '')
-						.filter(Boolean)
-						.join('\n');
+						.map(stripAnsi)
+						.filter((error) => error.trim().length > 0);
 					const annotations = test.annotations
 						.map(
-							(annotation) =>
-								`<br><strong>${escapeTableCell(annotation.type)}</strong>${
+							(annotation) => {
+								if (annotation.type === 'skip') {
+									return annotation.description
+										? `<br>${formatAnnotation(annotation.description)}`
+										: '';
+								}
+
+								return `<br><strong>${escapeTableCell(annotation.type)}</strong>${
 									annotation.description
 										? `: ${formatAnnotation(annotation.description)}`
 										: ''
-								}`,
+								}`;
+							},
 						)
 						.join('');
 
 					const errorText = errors
-						? `<br><br><details><summary><em>Error details</em></summary><pre>${escapeHtml(stripAnsi(errors)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`
-						: '';
+						.map(
+							(error, index) =>
+								`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${index > 0 ? ` (retry ${index})` : ''}</em></summary><pre>${escapeHtml(error).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
+						)
+						.join('');
 
-					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} |`;
 				})
 				.join('\n');
 
 			return `<details>
-<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
+<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
 
-| Test | Duration | Retries | Tags | Project |
-| --- | ---: | ---: | --- | --- |
+| Status | Test | Duration | Retries | Tags |
+| --- | --- | ---: | ---: | --- |
 ${rows}
 
 </details>`;
@@ -188,9 +202,11 @@ function renderHeader(
 	return `
 ## Test results
 
-**Total: [${counts.all}]** · *[${renderOutcomeCounts(counts)}]*
+**Total: ${counts.all}** · *[${renderOutcomeCounts(counts)}]*
 
-Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s
+*Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s*
+
+---
 `;
 }
 

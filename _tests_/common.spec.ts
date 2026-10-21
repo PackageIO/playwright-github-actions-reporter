@@ -17,6 +17,7 @@ test('formats date and time in UTC', () => {
 test('renders detailed test rows grouped by project and spec file', () => {
 	const testCase = {
 		annotations: [
+			{ type: 'skip' },
 			{
 				type: 'rp:setDescription',
 				description: 'XRAY link: https://example.test/case/1',
@@ -36,23 +37,25 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('## Test results');
 	expect(report).toContain(
-		'**Total: [1]** · *[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0]*',
+		'**Total: 1** · *[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0]*',
 	);
 	expect(report).toMatch(
 		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5\.35s/,
 	);
-	expect(report).toContain('| Test | Duration | Retries | Tags | Project |');
+	expect(report).toMatch(/Execution time: 5\.35s\*\n\n---/);
+	expect(report).toContain('| Status | Test | Duration | Retries | Tags |');
 	expect(report).toContain(
-		'<summary><strong><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts</strong> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5.35s]</em></summary>',
+		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5.35s]</em></summary>',
 	);
-	expect(report).toContain('| <span style="color: #1a7f37" title="Passed">✓</span>');
+	expect(report).toContain('| <span title="Passed">✓</span> Passed |');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
 	expect(report).toContain('| 5.354s |');
 	expect(report).toContain('| smoke, regression |');
-	expect(report).toContain('| linux / storageState |');
+	expect(report).not.toContain('| Project |');
+	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
@@ -83,13 +86,48 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span style="color: #cf222e" title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  | Default |',
+		'| <span title="Failed">✗</span> Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
-	expect(report).toContain('<span style="color: #cf222e" title="Failed">✗</span>');
+	expect(report).toContain('<span title="Failed">✗</span>');
+	expect(report).not.toContain('style=');
 	expect(report).not.toContain('**FAIL**');
 	expect(report).not.toContain('\u001b');
+});
+
+test('renders each test error in a numbered collapsible section', () => {
+	const failedTest = {
+		annotations: [],
+		location: { file: 'error.spec.ts' },
+		outcome: () => 'unexpected',
+		parent: { project: () => ({ name: 'Default' }) },
+		results: [
+			{
+				duration: 10,
+				errors: [
+					{ message: 'First failure' },
+					{ message: 'Second failure' },
+					{ message: ' \n ' },
+				],
+			},
+		],
+		tags: [],
+		titlePath: () => ['error.spec.ts', 'fails twice'],
+	} as unknown as TestCase;
+	const report = createReport([failedTest], { duration: 10 } as FullResult);
+
+	expect(report).toContain(
+		'<summary><em>Error details</em></summary><pre>First failure</pre></details>',
+	);
+	expect(report).toContain(
+		'<summary><em>Error details (retry 1)</em></summary><pre>Second failure</pre></details>',
+	);
+	expect(report).toContain(
+		'</details><details><summary><em>Error details (retry 1)</em></summary>',
+	);
+	expect(report).not.toContain('Error details (retry 2)');
+	expect(report).not.toContain('<pre></pre>');
 });
 
 test('resolves the package name for Playwright reporter lookup', () => {
