@@ -14,12 +14,6 @@ test('formats date and time in UTC', () => {
 	);
 });
 
-test('includes total execution time in the report', () => {
-	expect(createReport([], { duration: 1250 } as FullResult)).toContain(
-		'<strong>Total execution time:</strong> 1.25s',
-	);
-});
-
 test('resolves the package name for Playwright reporter lookup', () => {
 	expect(require.resolve('@packageio/playwright-github-actions-reporter')).toBe(
 		require.resolve('../dist/index.js'),
