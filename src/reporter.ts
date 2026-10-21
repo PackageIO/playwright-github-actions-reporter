@@ -183,8 +183,8 @@ function renderHeader(
 
 	return `
 <h2>Test results</h2>
-<p><strong>Total: [${counts.all}]</strong>    <em>[Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</em></p>
-<p>Generated: ${formatDateTime(new Date())}    Execution time: ${(runResult.duration / 1000).toFixed(2)}s</p>
+<p><strong>Total: [${counts.all}]</strong><em>[Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</em></p>
+<p>${formatDateTime(new Date())}|${(runResult.duration / 1000).toFixed(2)}s</p>
 `;
 }
 
