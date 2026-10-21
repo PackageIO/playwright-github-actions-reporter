@@ -36,25 +36,24 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('<h2>Test results</h2>');
 	expect(report).toContain(
-		'<p>All: 1  Passed: 1  Failed: 0  Flaky: 0  Skipped: 0</p>',
+		'<h3>All: 1  Passed: 1  Failed: 0  Flaky: 0  Skipped: 0</h3>',
 	);
-	expect(report).not.toContain('<table>');
+	expect(report).toContain('<table>');
 	expect(report).toContain(
-		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts | Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0 | Duration: 5.35s</summary>',
+		'<summary><span style="color: #1a7f37" title="Passed">✓</span> storageState.spec.ts  passed: 1  failed: 0  flaky: 0  skipped: 0  duration: 5.35s</summary>',
 	);
 	expect(report).toContain(
-		'| <span style="color: #1a7f37" title="Passed">✓</span>',
+		'<td><span style="color: #1a7f37" title="Passed">✓</span>',
 	);
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
-	expect(report).toContain(
-		'| Test | Duration | Retries | Tags | Project |',
-	);
-	expect(report).toContain(
-		'| 5.354s |  | smoke, regression | linux / storageState |',
-	);
+	expect(report).toContain('<th>Test</th>');
+	expect(report).toContain('<th>Duration</th>');
+	expect(report).toContain('<td>5.354s</td>');
+	expect(report).toContain('<td>smoke, regression</td>');
+	expect(report).toContain('<td>linux / storageState</td>');
 	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
@@ -81,7 +80,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'<details><summary>Error details</summary><pre>Expected failure</pre></details>',
+		'<tr><td colspan="5"><details><summary>Error details</summary><pre>Expected failure</pre></details></td></tr>',
 	);
 	expect(report).toContain(
 		'<span style="color: #cf222e" title="Failed">✗</span>',

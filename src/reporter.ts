@@ -156,19 +156,36 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.join('');
 
 					const errorRow = errors
-						? `\n| ↳ <details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details> | | | | |`
+						? `<tr><td colspan="5"><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details></td></tr>`
 						: '';
 
-					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |${errorRow}`;
+					return `<tr>
+					<td>${renderStatus(test.outcome())} ${escapeHtml(title)}${annotations}</td>
+					<td>${(duration / 1000).toFixed(3)}s</td>
+					<td>${retries || ''}</td>
+					<td>${escapeHtml(test.tags.join(', '))}</td>
+					<td>${escapeHtml(group.project)}</td>
+				</tr>${errorRow}`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}  passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s</summary>
 
-| Test | Duration | Retries | Tags | Project |
-| --- | ---: | ---: | --- | --- |
+<table>
+	<thead>
+		<tr>
+			<th>Test</th>
+			<th>Duration</th>
+			<th>Retries</th>
+			<th>Tags</th>
+			<th>Project</th>
+		</tr>
+	</thead>
+	<tbody>
 ${rows}
+</tbody>
+</table>
 </details>`;
 		})
 		.join('\n');
