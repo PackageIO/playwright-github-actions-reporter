@@ -1,5 +1,3 @@
-# @packageio/playwright-github-actions-reporter
-
 ![GitHub Actions job summary showing test statuses, durations, retries, and collapsible error details](assets/reporter.png)
 
 In GitHub Actions, the reporter appends a test report to the job summary for every run outcome. The report groups tests by spec file and project, with overall and per-group outcome counts and durations. Test rows include retries, tags, annotations, and collapsible error details.
