@@ -146,8 +146,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 					const errors = test.results
 						.flatMap((result) => result.errors)
 						.map((error) => error.message ?? error.value ?? error.stack ?? '')
-						.filter(Boolean)
-						.join('\n');
+						.filter(Boolean);
 					const annotations = test.annotations
 						.map(
 							(annotation) =>
@@ -160,8 +159,11 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.join('');
 
 					const errorText = errors
-						? `<br><br><details><summary><em>Error details</em></summary><pre>${escapeHtml(stripAnsi(errors)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`
-						: '';
+						.map(
+							(error, index) =>
+								`<br><br><details><summary><em>Error details${errors.length > 1 ? ` (retry ${index + 1})` : ''}</em></summary><pre>${escapeHtml(stripAnsi(error)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
+						)
+						.join('');
 
 					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
 				})
@@ -190,7 +192,7 @@ function renderHeader(
 
 **Total: [${counts.all}]** · *[${renderOutcomeCounts(counts)}]*
 
-Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s
+*Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s*
 `;
 }
 

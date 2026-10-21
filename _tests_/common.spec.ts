@@ -92,6 +92,31 @@ test('strips ANSI colors from rendered errors', () => {
 	expect(report).not.toContain('\u001b');
 });
 
+test('renders each test error in a numbered collapsible section', () => {
+	const failedTest = {
+		annotations: [],
+		location: { file: 'error.spec.ts' },
+		outcome: () => 'unexpected',
+		parent: { project: () => ({ name: 'Default' }) },
+		results: [
+			{
+				duration: 10,
+				errors: [{ message: 'First failure' }, { message: 'Second failure' }],
+			},
+		],
+		tags: [],
+		titlePath: () => ['error.spec.ts', 'fails twice'],
+	} as unknown as TestCase;
+	const report = createReport([failedTest], { duration: 10 } as FullResult);
+
+	expect(report).toContain(
+		'<summary><em>Error details (retry 1)</em></summary><pre>First failure</pre></details>',
+	);
+	expect(report).toContain(
+		'<summary><em>Error details (retry 2)</em></summary><pre>Second failure</pre></details>',
+	);
+});
+
 test('resolves the package name for Playwright reporter lookup', () => {
 	expect(require.resolve('@packageio/playwright-github-actions-reporter')).toBe(
 		require.resolve('../dist/index.js'),
