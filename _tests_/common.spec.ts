@@ -101,7 +101,11 @@ test('renders each test error in a numbered collapsible section', () => {
 		results: [
 			{
 				duration: 10,
-				errors: [{ message: 'First failure' }, { message: 'Second failure' }],
+				errors: [
+					{ message: 'First failure' },
+					{ message: 'Second failure' },
+					{ message: ' \n ' },
+				],
 			},
 		],
 		tags: [],
@@ -118,6 +122,8 @@ test('renders each test error in a numbered collapsible section', () => {
 	expect(report).toContain(
 		'</details><details><summary><em>Error details (retry 1)</em></summary>',
 	);
+	expect(report).not.toContain('Error details (retry 2)');
+	expect(report).not.toContain('<pre></pre>');
 });
 
 test('resolves the package name for Playwright reporter lookup', () => {
