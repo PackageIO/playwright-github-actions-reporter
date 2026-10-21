@@ -156,7 +156,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.join('');
 
 					const errorRow = errors
-						? `\n| ↳ **Error:** ${escapeTableCell(stripAnsi(errors))} | | | | |`
+						? `\n| ↳ <details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details> | | | | |`
 						: '';
 
 					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |${errorRow}`;
@@ -164,7 +164,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 				.join('\n');
 
 			return `<details>
-<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped} | Duration: ${(duration / 1000).toFixed(2)}s</summary>
+<summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}  passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s</summary>
 
 | Test | Duration | Retries | Tags | Project |
 | --- | ---: | ---: | --- | --- |
@@ -182,7 +182,7 @@ function renderHeader(
 
 	return `
 <h2>Test results</h2>
-<p>All: ${counts.all} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped}</p>
+<h3>All: ${counts.all}  Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}</h3>
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>
 <p>Execution time: <em> ${(runResult.duration / 1000).toFixed(2)}s</em></p>
 `;

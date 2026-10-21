@@ -36,7 +36,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('<h2>Test results</h2>');
 	expect(report).toContain(
-		'<p>All: 1 | Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0</p>',
+		'<p>All: 1  Passed: 1  Failed: 0  Flaky: 0  Skipped: 0</p>',
 	);
 	expect(report).not.toContain('<table>');
 	expect(report).toContain(
@@ -80,7 +80,9 @@ test('strips ANSI colors from rendered errors', () => {
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
 	expect(report).toContain('Expected failure');
-	expect(report).toContain('| ↳ **Error:** Expected failure | | | | |');
+	expect(report).toContain(
+		'<details><summary>Error details</summary><pre>Expected failure</pre></details>',
+	);
 	expect(report).toContain(
 		'<span style="color: #cf222e" title="Failed">✗</span>',
 	);
