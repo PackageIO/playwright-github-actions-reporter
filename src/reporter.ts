@@ -155,17 +155,17 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					const errorRow = errors
-						? `<tr><td colspan="5"><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details></td></tr>`
+					const errorText = errors
+						? `<br><strong>Error:</strong> ${escapeTableCell(stripAnsi(errors))}`
 						: '';
 
 					return `<tr>
-					<td>${renderStatus(test.outcome())} ${escapeHtml(title)}${annotations}</td>
+					<td>${renderStatus(test.outcome())} ${escapeHtml(title)}${annotations}${errorText}</td>
 					<td>${(duration / 1000).toFixed(3)}s</td>
 					<td>${retries || ''}</td>
 					<td>${escapeHtml(test.tags.join(', '))}</td>
 					<td>${escapeHtml(group.project)}</td>
-				</tr>${errorRow}`;
+				</tr>`;
 				})
 				.join('\n');
 
