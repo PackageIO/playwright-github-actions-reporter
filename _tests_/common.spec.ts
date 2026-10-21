@@ -70,8 +70,7 @@ test('strips ANSI colors from rendered errors', () => {
 				duration: 10,
 				errors: [
 					{
-						message:
-							'\u001b[31mExpected failure\u001b[39m\nReceived | value',
+						message: '\u001b[31mExpected failure\u001b[39m\nReceived | value',
 					},
 				],
 			},
