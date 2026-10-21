@@ -53,12 +53,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toContain('<th>Duration</th>');
 	expect(report).toContain('<td>linux / storageState</td>');
 	expect(report).not.toContain('<th>Status</th>');
-	expect(report).toContain(
-		'<summary>All specs (Clear filter) (1)</summary>',
-	);
-	expect(report).toContain('<summary>✅ Passed (1)</summary>');
-	expect(report).toContain('<details name="test-status-filter" open>');
-	expect(report).toContain('<details name="test-status-filter">');
+	expect(report).not.toContain('test-status-filter');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
 		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',

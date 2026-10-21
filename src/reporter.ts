@@ -24,13 +24,6 @@ const statusLabel = {
 	skipped: { emoji: '⏸️', text: 'Skipped' },
 } as const;
 
-const statusFilters = [
-	{ outcome: 'expected', label: 'Passed' },
-	{ outcome: 'unexpected', label: 'Failed' },
-	{ outcome: 'flaky', label: 'Flaky' },
-	{ outcome: 'skipped', label: 'Skipped' },
-] as const;
-
 function escapeHtml(value: string): string {
 	return value.replace(/[&<>"']/g, (character) => {
 		const entities: Record<string, string> = {
@@ -182,23 +175,6 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 		.join('\n');
 }
 
-function renderStatusFilters(tests: readonly TestCase[]): string {
-	const counts = countTests(tests);
-	const filters = [
-		`<details name="test-status-filter" open><summary>All specs (Clear filter) (${counts.all})</summary>${renderTestDetails(tests)}</details>`,
-		...statusFilters
-			.filter(({ outcome }) => counts[outcomeCountKey[outcome]] > 0)
-			.map(({ outcome, label }) => {
-				const filteredTests = tests.filter(
-					(test) => test.outcome() === outcome,
-				);
-				return `<details name="test-status-filter"><summary>${statusLabel[outcome].emoji} ${label} (${filteredTests.length})</summary>${renderTestDetails(filteredTests)}</details>`;
-			}),
-	];
-
-	return filters.join('\n');
-}
-
 function renderHeader(
 	tests: readonly TestCase[],
 	runResult: FullResult,
@@ -206,8 +182,8 @@ function renderHeader(
 	const counts = countTests(tests);
 
 	return `
-	<h2>Test results</h2>
-	<p>All: ${counts.all} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped}</p>
+<h2>Test results</h2>
+<p>All: ${counts.all} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped}</p>
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>
 <p>Execution time: <em> ${(runResult.duration / 1000).toFixed(2)}s</em></p>
 `;
@@ -219,6 +195,6 @@ export function createReport(
 ): string {
 	return `
 ${renderHeader(tests, runResult)}
-${renderStatusFilters(tests)}
+${renderTestDetails(tests)}
 `;
 }
