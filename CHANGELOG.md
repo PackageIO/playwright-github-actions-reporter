@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2026-10-21
+### Added
+- Add Biome formatting with `npm run format` and `npm run format:check` scripts.
+- Add a pull request preview workflow with examples for passed, failed, skipped, and flaky test outcomes.
+- Add detailed reports grouped by spec file and project, including outcome counts, durations, retries, tags, annotations, and collapsible error details.
+- Make HTTP and HTTPS links in annotation descriptions clickable.
+
+### Changed
+- Format the generated report timestamp as `YYYY-MM-DD/HH:mm:ss` in UTC.
+- Append a detailed GitHub Actions job summary for every run outcome.
 
 ## [1.0.4] - 2026-10-21
 ### Changed

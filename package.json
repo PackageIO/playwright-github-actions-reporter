@@ -1,6 +1,6 @@
 {
   "name": "@packageio/playwright-github-actions-reporter",
-  "version": "1.0.4",
+  "version": "1.2.0",
   "type": "module",
   "description": "GitHub Actions reporter for Playwright",
   "main": "./dist/index.js",
@@ -20,15 +20,18 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test",
+    "test": "npm run build && playwright test",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "prepack": "npm run build"
   },
   "peerDependencies": {
     "@playwright/test": ">=1.40.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
     "@playwright/test": "^1.56.0",
-    "@types/node": "^24.0.0",
+    "@types/node": "^24.19.2",
     "typescript": "^5.9.0"
   },
   "author": "Vadym Nastoiashchyi",

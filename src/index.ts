@@ -6,6 +6,10 @@ import type {
 	Reporter,
 	Suite,
 } from '@playwright/test/reporter';
+import { createReport } from './reporter.js';
+
+const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+const isGitHubActions = process.env.GITHUB_ACTIONS;
 
 const packageMetadata = createRequire(import.meta.url)('../package.json') as {
 	name: string;
@@ -13,9 +17,13 @@ const packageMetadata = createRequire(import.meta.url)('../package.json') as {
 };
 
 export default class GitHubActionsReporter implements Reporter {
+	private suite?: Suite;
 
-	onBegin(_config: FullConfig, _suite: Suite): void {
-		process.stdout.write(`${packageMetadata.name} v${packageMetadata.version}\n`);
+	onBegin(_config: FullConfig, suite: Suite): void {
+		this.suite = suite;
+		process.stdout.write(
+			`${packageMetadata.name} v${packageMetadata.version}\n`,
+		);
 	}
 
 	printsToStdio(): boolean {
@@ -23,10 +31,9 @@ export default class GitHubActionsReporter implements Reporter {
 	}
 
 	async onEnd(runResult: FullResult): Promise<void> {
-		const summaryPath = process.env.GITHUB_STEP_SUMMARY;
-		if (process.env.GITHUB_ACTIONS === 'true' && summaryPath) {
-			const summary = runResult.status === 'passed' ? 'result' : `result: ${runResult.status}`;
-			await appendFile(summaryPath, `${summary}\n`, 'utf8');
+		if (isGitHubActions === 'true' && summaryPath) {
+			const report = createReport(this.suite?.allTests() ?? [], runResult);
+			await appendFile(summaryPath, report, 'utf8');
 		}
 	}
 }
