@@ -110,10 +110,13 @@ test('renders each test error in a numbered collapsible section', () => {
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
 	expect(report).toContain(
-		'<summary><em>Error details (retry 1)</em></summary><pre>First failure</pre></details>',
+		'<summary><em>Error details</em></summary><pre>First failure</pre></details>',
 	);
 	expect(report).toContain(
-		'<summary><em>Error details (retry 2)</em></summary><pre>Second failure</pre></details>',
+		'<summary><em>Error details (retry 1)</em></summary><pre>Second failure</pre></details>',
+	);
+	expect(report).toContain(
+		'</details><br><details><summary><em>Error details (retry 1)</em></summary>',
 	);
 });
 
