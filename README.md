@@ -1,11 +1,11 @@
-# @therootsoft/playwright-github-actions-reporter
+# @packageio/playwright-github-actions-reporter
 
 A minimal Playwright reporter that prints its package name and version before tests run. After any GitHub Actions run, it adds a concise result to the job summary: `result` on success, or `result: <status>` otherwise.
 
 ## Install
 
 ```sh
-npm install --save-dev @therootsoft/playwright-github-actions-reporter
+npm install --save-dev @packageio/playwright-github-actions-reporter
 ```
 
 ## Configure
@@ -18,7 +18,7 @@ import { defineConfig } from '@playwright/test'
 export default defineConfig({
 	reporter: [
 		['list'],
-		['@therootsoft/playwright-github-actions-reporter'],
+		['@packageio/playwright-github-actions-reporter'],
 	],
 })
 ```
