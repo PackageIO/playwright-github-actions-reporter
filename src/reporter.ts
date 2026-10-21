@@ -156,7 +156,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.join('');
 
 					const errorText = errors
-						? `<br><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details>`
+						? `<br><br><details><summary>Error details</summary><pre>${escapeHtml(stripAnsi(errors))}</pre></details>`
 						: '';
 
 					return `<tr>
@@ -171,7 +171,6 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 
 			return `<details>
 <summary>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}    [passed: ${counts.passed}  failed: ${counts.failed}  flaky: ${counts.flaky}  skipped: ${counts.skipped}  duration: ${(duration / 1000).toFixed(2)}s]</summary>
-
 <table>
 	<thead>
 		<tr>
@@ -199,7 +198,7 @@ function renderHeader(
 
 	return `
 <h2>Test results</h2>
-<p><b>Total: ${counts.all}    [Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</b></p>
+<p><b>Total: [${counts.all}]    [Passed: ${counts.passed}  Failed: ${counts.failed}  Flaky: ${counts.flaky}  Skipped: ${counts.skipped}]</b></p>
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>
 <p>Execution time: <em> ${(runResult.duration / 1000).toFixed(2)}s</em></p>
 `;
