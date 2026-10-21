@@ -70,9 +70,36 @@ function groupTests(tests: readonly TestCase[]): TestGroup[] {
 	return [...groups.values()];
 }
 
+function countTests(tests: readonly TestCase[]): TestCounts {
+	const counts: TestCounts = {
+		all: 0,
+		passed: 0,
+		failed: 0,
+		flaky: 0,
+		skipped: 0,
+	};
+
+	for (const test of tests) {
+		counts.all += 1;
+		counts[outcomeCountKey[test.outcome()]] += 1;
+	}
+
+	return counts;
+}
+
 function renderTestDetails(tests: readonly TestCase[]): string {
 	return groupTests(tests)
 		.map((group) => {
+			const counts = countTests(group.tests);
+			const duration = group.tests.reduce(
+				(groupDuration, test) =>
+					groupDuration +
+					test.results.reduce(
+						(testDuration, result) => testDuration + result.duration,
+						0,
+					),
+				0,
+			);
 			const groupStatus = group.tests.some(
 				(test) => test.outcome() === 'unexpected',
 			)
@@ -118,8 +145,8 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						: '';
 
 					return `${annotations}<tr>
-					<td>${escapeHtml(title)}</td>
-					<td>${statusLabel[test.outcome()].emoji} ${statusLabel[test.outcome()].text}</td>
+					<td>${escapeHtml(group.project)}</td>
+					<td><span title="${statusLabel[test.outcome()].text}">${statusLabel[test.outcome()].emoji}</span> ${escapeHtml(title)}</td>
 					<td>${(duration / 1000).toFixed(3)}s</td>
 					<td>${retries || ''}</td>
 					<td>${escapeHtml(test.tags.join(', '))}</td>
@@ -128,12 +155,12 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 				})
 				.join('\n');
 
-			return `<details><summary>${groupStatus.emoji} ${groupStatus.text} ${escapeHtml(basename(group.file))} (${escapeHtml(group.project)})</summary><br>
+			return `<details><summary>${groupStatus.emoji} ${escapeHtml(basename(group.file))} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped} | Execution time: ${(duration / 1000).toFixed(2)}s | Project: ${escapeHtml(group.project)}</summary><br>
 <table role="table">
 	<thead>
 		<tr>
+			<th>Project</th>
 			<th>Test</th>
-			<th>Status</th>
 			<th>Duration</th>
 			<th>Retries</th>
 			<th>Tags</th>
@@ -152,18 +179,7 @@ function renderHeader(
 	tests: readonly TestCase[],
 	runResult: FullResult,
 ): string {
-	const counts: TestCounts = {
-		all: 0,
-		passed: 0,
-		failed: 0,
-		flaky: 0,
-		skipped: 0,
-	};
-
-	for (const test of tests) {
-		counts.all += 1;
-		counts[outcomeCountKey[test.outcome()]] += 1;
-	}
+	const counts = countTests(tests);
 
 	return `
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>

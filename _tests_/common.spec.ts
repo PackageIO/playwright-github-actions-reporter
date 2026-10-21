@@ -38,13 +38,16 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		report.indexOf('<h2>Test results</h2>'),
 	);
 	expect(report).toContain(
-		'<summary>✅ Pass storageState.spec.ts (linux / storageState)</summary>',
+		'<summary>✅ storageState.spec.ts | Passed: 1 | Failed: 0 | Flaky: 0 | Skipped: 0 | Execution time: 5.35s | Project: linux / storageState</summary>',
 	);
-	expect(report).toContain(
-		'ui/storageState.spec.ts &gt; setup storage state with cookies',
+	expect(report).toMatch(
+		/<td><span title="Pass">✅<\/span> .*ui\/storageState\.spec\.ts &gt; setup storage state with cookies<\/td>/,
 	);
 	expect(report).toContain('5.354s');
-	expect(report).toContain('<td>✅ Pass</td>');
+	expect(report).toContain('<th>Project</th>');
+	expect(report).toContain('<th>Duration</th>');
+	expect(report).toContain('<td>linux / storageState</td>');
+	expect(report).not.toContain('<th>Status</th>');
 	expect(report).toContain('smoke, regression');
 	expect(report).toContain(
 		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',
