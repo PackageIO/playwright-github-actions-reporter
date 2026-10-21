@@ -177,15 +177,15 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
 
-| Test | Duration | Retries | Tags | Project |
-| --- | ---: | ---: | --- | --- |
+| Status | Test | Duration | Retries | Tags | Project |
+| --- | --- | ---: | ---: | --- | --- |
 ${rows}
 
 </details>`;
