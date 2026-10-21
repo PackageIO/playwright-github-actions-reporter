@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { expect, test } from '@playwright/test';
-import type { FullResult } from '@playwright/test/reporter';
+import type { FullResult, TestCase } from '@playwright/test/reporter';
 import GitHubActionsReporter from '../dist/index.js';
 import { formatDateTime } from '../dist/utils/date.js';
 import { createReport } from '../dist/reporter.js';
@@ -11,6 +11,43 @@ const packageMetadata = createRequire(import.meta.url)('../package.json');
 test('formats date and time in UTC', () => {
 	expect(formatDateTime(new Date('2026-10-21T08:44:58.469Z'))).toBe(
 		'2026-10-21/08:44:58',
+	);
+});
+
+test('renders detailed test rows grouped by project and spec file', () => {
+	const testCase = {
+		annotations: [
+			{
+				type: 'rp:setDescription',
+				description: 'XRAY link: https://example.test/case/1',
+			},
+		],
+		location: { file: '/workspace/ui/storageState.spec.ts' },
+		outcome: () => 'expected',
+		parent: { project: () => ({ name: 'linux / storageState' }) },
+		results: [{ duration: 5354, errors: [] }],
+		tags: ['smoke', 'regression'],
+		titlePath: () => [
+			'storageState.spec.ts',
+			'setup storage state with cookies',
+		],
+	} as unknown as TestCase;
+	const report = createReport([testCase], { duration: 5354 } as FullResult);
+
+	expect(report.indexOf('<h2>Test summary</h2>')).toBeLessThan(
+		report.indexOf('<h2>Test results</h2>'),
+	);
+	expect(report).toContain(
+		'<summary>✅ Pass storageState.spec.ts (linux / storageState)</summary>',
+	);
+	expect(report).toContain(
+		'ui/storageState.spec.ts &gt; setup storage state with cookies',
+	);
+	expect(report).toContain('5.354s');
+	expect(report).toContain('<td>✅ Pass</td>');
+	expect(report).toContain('smoke, regression');
+	expect(report).toContain(
+		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',
 	);
 });
 
