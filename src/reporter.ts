@@ -51,7 +51,7 @@ function renderStatus(outcome: keyof typeof statusLabel): string {
 }
 
 function renderTestStatus(outcome: keyof typeof statusLabel): string {
-	return `${renderStatus(outcome)} · ${statusLabel[outcome].title}`;
+	return `${renderStatus(outcome)} ${statusLabel[outcome].title}`;
 }
 
 function formatAnnotation(description: string): string {
