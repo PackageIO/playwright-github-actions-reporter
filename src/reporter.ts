@@ -20,8 +20,8 @@ type TestGroup = {
 const statusLabel = {
 	expected: { character: '✓', color: '#1a7f37', title: 'Passed' },
 	unexpected: { character: '✗', color: '#cf222e', title: 'Failed' },
-	flaky: { character: '↻', color: '#bf8700', title: 'Flaky' },
-	skipped: { character: '○', color: '#6e7781', title: 'Skipped' },
+	flaky: { character: '⚠', color: '#bf8700', title: 'Flaky' },
+	skipped: { character: '⊘', color: '#6e7781', title: 'Skipped' },
 } as const;
 
 function escapeHtml(value: string): string {
