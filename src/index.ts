@@ -7,6 +7,9 @@ import type {
 	Suite,
 } from '@playwright/test/reporter';
 
+const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+const isGitHubActions = process.env.GITHUB_ACTIONS;
+
 const packageMetadata = createRequire(import.meta.url)('../package.json') as {
 	name: string;
 	version: string;
@@ -23,8 +26,7 @@ export default class GitHubActionsReporter implements Reporter {
 	}
 
 	async onEnd(runResult: FullResult): Promise<void> {
-		const summaryPath = process.env.GITHUB_STEP_SUMMARY;
-		if (process.env.GITHUB_ACTIONS === 'true' && summaryPath) {
+		if (isGitHubActions === 'true' && summaryPath) {
 			const summary = runResult.status === 'passed' ? 'result' : `result: ${runResult.status}`;
 			await appendFile(summaryPath, `${summary}\n`, 'utf8');
 		}

@@ -31,3 +31,5 @@ At the start of each run, the reporter prints its package name and version.
 npm install
 npm test
 ```
+
+`npm test` generates the Playwright HTML report at `playwright-report/index.html` and the reporter summary at `test-results/reporter-preview.md`. Open the HTML report with `npx playwright show-report`; open the Markdown file with VS Code's Markdown preview. The summary is `result` for a passing run, or `result: <status>` otherwise.
