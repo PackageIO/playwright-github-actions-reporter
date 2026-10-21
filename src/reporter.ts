@@ -50,6 +50,10 @@ function renderStatus(outcome: keyof typeof statusLabel): string {
 	return `<span title="${status.title}">${status.character}</span>`;
 }
 
+function renderTestStatus(outcome: keyof typeof statusLabel): string {
+	return `${renderStatus(outcome)} · ${statusLabel[outcome].title}`;
+}
+
 function formatAnnotation(description: string): string {
 	return description
 		.split(/(https?:\/\/[^\s<>"']+)/g)
@@ -173,12 +177,12 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
+					return `| ${renderTestStatus(test.outcome())} ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} | ${escapeTableCell(group.project)} |`;
 				})
 				.join('\n');
 
 			return `<details>
-<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
+<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
 
 | Test | Duration | Retries | Tags | Project |
 | --- | ---: | ---: | --- | --- |
@@ -198,7 +202,7 @@ function renderHeader(
 	return `
 ## Test results
 
-**Total: [${counts.all}]** · *[${renderOutcomeCounts(counts)}]*
+**Total: ${counts.all}** · *[${renderOutcomeCounts(counts)}]*
 
 *Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s*
 `;

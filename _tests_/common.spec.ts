@@ -37,16 +37,16 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('## Test results');
 	expect(report).toContain(
-		'**Total: [1]** · *[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0]*',
+		'**Total: 1** · *[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0]*',
 	);
 	expect(report).toMatch(
 		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5\.35s/,
 	);
 	expect(report).toContain('| Test | Duration | Retries | Tags | Project |');
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5.35s]</em></summary>',
+		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5.35s]</em></summary>',
 	);
-	expect(report).toContain('| <span title="Passed">✓</span>');
+	expect(report).toContain('| <span title="Passed">✓</span> · Passed');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
@@ -85,7 +85,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">✗</span> error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  | Default |',
+		'| <span title="Failed">✗</span> · Failed error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  | Default |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
