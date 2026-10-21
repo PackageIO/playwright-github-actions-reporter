@@ -21,7 +21,7 @@ const statusLabel = {
 	expected: { emoji: '✅', text: 'Pass' },
 	unexpected: { emoji: '❌', text: 'Fail' },
 	flaky: { emoji: '⚠️', text: 'Flaky' },
-	skipped: { emoji: '⏭️', text: 'Skipped' },
+	skipped: { emoji: '⏸️', text: 'Skipped' },
 } as const;
 
 function escapeHtml(value: string): string {
@@ -145,26 +145,26 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						: '';
 
 					return `${annotations}<tr>
-					<td>${escapeHtml(group.project)}</td>
 					<td><span title="${statusLabel[test.outcome()].text}">${statusLabel[test.outcome()].emoji}</span> ${escapeHtml(title)}</td>
-					<td>${(duration / 1000).toFixed(3)}s</td>
+					<td>🕒 ${(duration / 1000).toFixed(3)}s</td>
 					<td>${retries || ''}</td>
 					<td>${escapeHtml(test.tags.join(', '))}</td>
 					<td>${escapeHtml(errors).replace(/\n/g, '<br>')}</td>
+					<td>${escapeHtml(group.project)}</td>
 				</tr>`;
 				})
 				.join('\n');
 
-			return `<details><summary>${groupStatus.emoji} ${escapeHtml(basename(group.file))} | Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped} | Execution time: ${(duration / 1000).toFixed(2)}s | Project: ${escapeHtml(group.project)}</summary><br>
+			return `<details><summary>${groupStatus.emoji} ${escapeHtml(basename(group.file))} | <em>Passed: ${counts.passed} | Failed: ${counts.failed} | Flaky: ${counts.flaky} | Skipped: ${counts.skipped}</em> | 🕒 Duration: ${(duration / 1000).toFixed(2)}s</summary><br>
 <table role="table">
 	<thead>
 		<tr>
-			<th>Project</th>
 			<th>Test</th>
 			<th>Duration</th>
 			<th>Retries</th>
 			<th>Tags</th>
 			<th>Error</th>
+			<th>Project</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -183,7 +183,7 @@ function renderHeader(
 
 	return `
 <p>Generated: <em>${formatDateTime(new Date())}</em></p>
-<p>Execution time: <em>${(runResult.duration / 1000).toFixed(2)}s</em></p>
+<p>Execution time: <em>🕒 ${(runResult.duration / 1000).toFixed(2)}s</em></p>
 <table>
 	<thead>
 		<tr>
