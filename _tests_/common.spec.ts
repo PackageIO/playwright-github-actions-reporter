@@ -62,7 +62,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('<strong>Tags:</strong> smoke·regression');
+	expect(report).toContain('<em>tags: smoke·regression</em>');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
@@ -87,7 +87,7 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		outcome: () => 'expected',
 		parent: { project: () => ({ name: 'Default' }) },
 		results: [{ duration: 250, errors: [] }],
-		tags: [],
+		tags: ['@smoke', '@cart'],
 		titlePath: () => ['attributes.spec.ts', 'reports metadata'],
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 250 } as FullResult);
@@ -96,7 +96,7 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | attributes.spec.ts &gt; reports metadata<br><strong>Attributes:</strong> owner: vadym.nastoiashchyi·component: checkout |  | 250ms |',
+		'| <span title="Passed">✓</span> Passed | attributes.spec.ts &gt; reports metadata<br><em>tags: smoke·cart</em><br><em>attributes: owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
