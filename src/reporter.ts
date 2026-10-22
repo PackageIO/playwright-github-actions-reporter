@@ -228,16 +228,19 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${metadata}${annotations}${errorText} | ${retries || ''} | ${formatDuration(duration)} |`;
+					return `<tr><td>${renderTestStatus(test.outcome())}</td><td>${escapeTableCell(title)}${metadata}${annotations}${errorText}</td><td>${retries || ''}</td><td>${formatDuration(duration)}</td></tr>`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
-| Status | Test | Retries | Duration |
-| --- | --- | ---: | ---: |
+<table width="100%">
+<thead><tr><th>Status</th><th>Test</th><th align="right">Retries</th><th align="right">Duration</th></tr></thead>
+<tbody>
 ${rows}
+</tbody>
+</table>
 
 </details>`;
 		})
