@@ -27,6 +27,23 @@ test.describe('Cart management', () => {
 		},
 	);
 
+	test(
+		'restores a tagged cart',
+		{
+			tag: '@regression',
+			annotation: {
+				type: 'test metadata',
+				description: JSON.stringify([
+					{ key: 'owner', value: 'checkout-team' },
+					{ key: 'component', value: 'cart' },
+				]),
+			},
+		},
+		() => {
+			expect(['notebook', 'pen']).toContain('pen');
+		},
+	);
+
 	test.describe('Saved carts', () => {
 		test('restores saved items', () => {
 			expect(['notebook', 'pen']).toHaveLength(2);
