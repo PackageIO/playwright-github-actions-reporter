@@ -1,6 +1,7 @@
 import { basename, isAbsolute, relative } from 'node:path';
 import type { FullResult, TestCase } from '@playwright/test/reporter';
 import { formatDateTime } from './utils/date.js';
+import { formatDuration } from './utils/duration.js';
 import { outcomeCountKey } from './utils/outcome.js';
 
 export type TestCounts = {
@@ -63,6 +64,24 @@ function formatAnnotation(description: string): string {
 			return `<a href="${escapedPart}" rel="noopener noreferrer">${escapedPart}</a>`;
 		})
 		.join('');
+}
+
+function parseAttributes(description: string | undefined): Array<[string, string]> {
+	if (!description) return [];
+
+	try {
+		const value: unknown = JSON.parse(description);
+		if (!Array.isArray(value)) return [];
+		return value.flatMap((entry): Array<[string, string]> => {
+			if (typeof entry !== 'object' || entry === null) return [];
+			if (!('key' in entry) && !('value' in entry)) return [];
+			const key = 'key' in entry && typeof entry.key === 'string' ? entry.key : '';
+			const item = 'value' in entry ? String(entry.value) : '';
+			return [[key, item]];
+		});
+	} catch {
+		return [];
+	}
 }
 
 function groupTests(tests: readonly TestCase[]): TestGroup[] {
@@ -141,18 +160,50 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 								part !== basename(test.location.file) &&
 								part !== group.project,
 						);
-					const title = [group.file, ...titleParts].join(' > ');
+					const title = titleParts.join(' > ');
 					const duration = test.results.reduce(
 						(total, result) => total + result.duration,
 						0,
 					);
 					const retries = Math.max(0, test.results.length - 1);
+					const attributeAnnotations = test.annotations
+						.map((annotation) => ({
+							annotation,
+							attributes: parseAttributes(annotation.description),
+						}))
+						.filter((item) => item.attributes.length > 0);
+					const attributes = attributeAnnotations
+						.flatMap((item) => item.attributes)
+						.map(([key, value]) => `${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.join('·');
+					const tags = test.tags
+						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
+						.join('·');
+					const metadata = [
+						tags ? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>` : '',
+						attributes
+							? `${tags ? '<br>' : '<br><br>'}<strong><em>attributes:</em></strong> <em>${attributes}</em>`
+							: '',
+					].join('');
 					const errors = test.results
-						.flatMap((result) => result.errors)
-						.map((error) => error.message ?? error.value ?? error.stack ?? '')
-						.map(stripAnsi)
-						.filter((error) => error.trim().length > 0);
+						.map((result) =>
+							result.errors
+								.map((error) => error.message ?? error.value ?? error.stack ?? '')
+								.map(stripAnsi)
+								.find((error) => error.trim().length > 0),
+						)
+						.map((error, retry) => ({ error, retry }))
+						.filter(
+							(entry): entry is { error: string; retry: number } =>
+								typeof entry.error === 'string',
+						);
 					const annotations = test.annotations
+						.filter(
+							(annotation) =>
+								!attributeAnnotations.some(
+									(item) => item.annotation === annotation,
+								),
+						)
 						.map(
 							(annotation) => {
 								if (annotation.type === 'skip') {
@@ -172,20 +223,20 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 
 					const errorText = errors
 						.map(
-							(error, index) =>
-								`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${index > 0 ? ` (retry ${index})` : ''}</em></summary><pre>${escapeHtml(error).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
+							({ error, retry }, index) =>
+								`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${retry > 0 ? ` (retry ${retry})` : ''}</em></summary><pre>${escapeHtml(error).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${metadata}${annotations}${errorText} | ${retries || ''} | ${formatDuration(duration)} |`;
 				})
 				.join('\n');
 
 			return `<details>
-<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
+<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
-| Status | Test | Duration | Retries | Tags |
-| --- | --- | ---: | ---: | --- |
+| Status | Test | Retries | Duration |
+| --- | --- | ---: | ---: |
 ${rows}
 
 </details>`;
@@ -204,7 +255,7 @@ function renderHeader(
 
 **Total: ${counts.all}** · *[${renderOutcomeCounts(counts)}]*
 
-*Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s*
+*Generated: ${formatDateTime(new Date())} · Execution time: ${formatDuration(runResult.duration)}*
 
 ---
 `;

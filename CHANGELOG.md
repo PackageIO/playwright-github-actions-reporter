@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.0] - 2026-10-21
+## [1.4.0] - 2026-10-22
+
+### Changed
+- Show tags and attribute-shaped Playwright annotations beneath each test title.
+- Show only the first error from each attempt, with retry labels matching the attempt number.
+- Use concise test titles and place retries before duration in the test table.
+- Format durations as zero-padded milliseconds below one second and in seconds, minutes, or hours otherwise.
+
+## [1.3.2] - 2026-10-21
 
 ### Changed
 - Minor report style changes
