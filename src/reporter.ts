@@ -215,15 +215,15 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${attributes} | ${formatDuration(duration)} | ${retries || ''} | ${tags} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${tags} | ${attributes} | ${retries || ''} | ${formatDuration(duration)} |`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
-| Status | Test | Attributes | Duration | Retries | Tags |
-| --- | --- | --- | ---: | ---: | --- |
+| Status | Test | Tags | Attributes | Retries | Duration |
+| --- | --- | --- | --- | ---: | ---: |
 ${rows}
 
 </details>`;
