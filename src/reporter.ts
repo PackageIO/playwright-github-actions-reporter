@@ -179,15 +179,12 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 					const tags = test.tags
 						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
 						.join('·');
-					const metadataContent = [
-						tags ? `tags: ${tags}` : '',
-						attributes ? `attributes: ${attributes}` : '',
-					]
-						.filter(Boolean)
-						.join('&emsp;&emsp;');
-					const metadata = metadataContent
-						? ` <em>${metadataContent}</em>`
-						: '';
+					const metadata = [
+						tags ? `<br><em>tags: ${tags}</em>` : '',
+						attributes
+							? `<br><em>attributes: ${attributes}</em>`
+							: '',
+					].join('');
 					const errors = test.results
 						.flatMap((result) => result.errors)
 						.map((error) => error.message ?? error.value ?? error.stack ?? '')

@@ -62,7 +62,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('<em>tags: smoke·regression</em>');
+	expect(report).toContain('<br><em>tags: smoke·regression</em>');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
@@ -96,7 +96,7 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-			'| <span title="Passed">✓</span> Passed | reports metadata <em>tags: smoke·cart&emsp;&emsp;attributes: owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
+			'| <span title="Passed">✓</span> Passed | reports metadata<br><em>tags: smoke·cart</em><br><em>attributes: owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
