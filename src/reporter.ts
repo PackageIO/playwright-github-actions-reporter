@@ -180,9 +180,9 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
 						.join('·');
 					const metadata = [
-						tags ? `<br><br><strong><em>tags:</em></strong> ${tags}` : '',
+						tags ? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>` : '',
 						attributes
-							? `${tags ? '<br>' : '<br><br>'}<strong><em>attributes:</em></strong> ${attributes}`
+							? `${tags ? '<br>' : '<br><br>'}<strong><em>attributes:</em></strong> <em>${attributes}</em>`
 							: '',
 					].join('');
 					const errors = test.results
