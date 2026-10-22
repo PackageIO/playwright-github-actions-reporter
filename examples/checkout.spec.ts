@@ -1,9 +1,21 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Cart management', () => {
-	test('adds a product to the cart', () => {
-		expect(['notebook']).toContain('notebook');
-	});
+	test(
+		'adds a product to the cart',
+		{
+			annotation: {
+				type: 'test metadata',
+				description: JSON.stringify([
+					{ key: 'owner', value: 'checkout-team' },
+					{ key: 'component', value: 'cart' },
+				]),
+			},
+		},
+		() => {
+			expect(['notebook']).toContain('notebook');
+		},
+	);
 
 	test('updates the item quantity', () => {
 		expect(2 * 3).toBe(6);

@@ -66,6 +66,24 @@ function formatAnnotation(description: string): string {
 		.join('');
 }
 
+function parseAttributes(description: string | undefined): Array<[string, string]> {
+	if (!description) return [];
+
+	try {
+		const value: unknown = JSON.parse(description);
+		if (!Array.isArray(value)) return [];
+		return value.flatMap((entry): Array<[string, string]> => {
+			if (typeof entry !== 'object' || entry === null) return [];
+			if (!('key' in entry) && !('value' in entry)) return [];
+			const key = 'key' in entry && typeof entry.key === 'string' ? entry.key : '';
+			const item = 'value' in entry ? String(entry.value) : '';
+			return [[key, item]];
+		});
+	} catch {
+		return [];
+	}
+}
+
 function groupTests(tests: readonly TestCase[]): TestGroup[] {
 	const groups = new Map<string, TestGroup>();
 
@@ -148,12 +166,28 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						0,
 					);
 					const retries = Math.max(0, test.results.length - 1);
+					const attributeAnnotations = test.annotations
+						.map((annotation) => ({
+							annotation,
+							attributes: parseAttributes(annotation.description),
+						}))
+						.filter((item) => item.attributes.length > 0);
+					const attributes = attributeAnnotations
+						.flatMap((item) => item.attributes)
+						.map(([key, value]) => `${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.join('<br>');
 					const errors = test.results
 						.flatMap((result) => result.errors)
 						.map((error) => error.message ?? error.value ?? error.stack ?? '')
 						.map(stripAnsi)
 						.filter((error) => error.trim().length > 0);
 					const annotations = test.annotations
+						.filter(
+							(annotation) =>
+								!attributeAnnotations.some(
+									(item) => item.annotation === annotation,
+								),
+						)
 						.map(
 							(annotation) => {
 								if (annotation.type === 'skip') {
@@ -178,15 +212,15 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${formatDuration(duration)} | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${attributes} | ${formatDuration(duration)} | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} |`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
-| Status | Test | Duration | Retries | Tags |
-| --- | --- | ---: | ---: | --- |
+| Status | Test | Attributes | Duration | Retries | Tags |
+| --- | --- | --- | ---: | ---: | --- |
 ${rows}
 
 </details>`;
