@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import type { FullResult, TestCase } from '@playwright/test/reporter';
 import GitHubActionsReporter from '../dist/index.js';
 import { formatDateTime } from '../dist/utils/date.js';
+import { formatDuration } from '../dist/utils/duration.js';
 import { createReport } from '../dist/reporter.js';
 
 const require = createRequire(import.meta.url);
@@ -12,6 +13,12 @@ test('formats date and time in UTC', () => {
 	expect(formatDateTime(new Date('2026-10-21T08:44:58.469Z'))).toBe(
 		'2026-10-21/08:44:58',
 	);
+});
+
+test('formats durations as seconds, minutes and hours', () => {
+	expect(formatDuration(5354)).toBe('5s');
+	expect(formatDuration(150544)).toBe('2m 30.54s');
+	expect(formatDuration(3723456)).toBe('1h 2m 3.46s');
 });
 
 test('renders detailed test rows grouped by project and spec file', () => {
@@ -40,19 +47,19 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'**Total: 1** · *[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0]*',
 	);
 	expect(report).toMatch(
-		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5\.35s/,
+		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5s/,
 	);
-	expect(report).toMatch(/Execution time: 5\.35s\*\n\n---/);
+	expect(report).toMatch(/Execution time: 5s\*\n\n---/);
 	expect(report).toContain('| Status | Test | Duration | Retries | Tags |');
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5.35s]</em></summary>',
+		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5s]</em></summary>',
 	);
 	expect(report).toContain('| <span title="Passed">✓</span> Passed |');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
-	expect(report).toContain('| 5.354s |');
+	expect(report).toContain('| 5s |');
 	expect(report).toContain('| smoke, regression |');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
@@ -86,7 +93,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">✗</span> Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0.010s |  |  |',
+		'| <span title="Failed">✗</span> Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> | 0s |  |  |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
