@@ -174,15 +174,15 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.filter((item) => item.attributes.length > 0);
 					const attributes = attributeAnnotations
 						.flatMap((item) => item.attributes)
-						.map(([key, value]) => `• ${escapeTableCell(key)}: ${escapeTableCell(value)}`)
-						.join('<br>');
+						.map(([key, value]) => `${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.join('·');
 					const tags = test.tags
-						.map((tag) => `• ${escapeTableCell(tag.replace(/^@/, ''))}`)
-						.join('<br>');
+						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
+						.join('·');
 					const metadata = [
-						tags ? `<br><strong>Tags:</strong><br>${tags}` : '',
+						tags ? `<br><strong>tags:</strong> ${tags}` : '',
 						attributes
-							? `<br><strong>Attributes:</strong><br>${attributes}`
+							? `<br><strong>attributes:</strong> ${attributes}`
 							: '',
 					].join('');
 					const errors = test.results
