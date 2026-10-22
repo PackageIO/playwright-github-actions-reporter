@@ -4,6 +4,7 @@ test.describe('Cart management', () => {
 	test(
 		'adds a product to the cart',
 		{
+			tag: ['@smoke', '@cart'],
 			annotation: {
 				type: 'test metadata',
 				description: JSON.stringify([

@@ -174,7 +174,10 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.filter((item) => item.attributes.length > 0);
 					const attributes = attributeAnnotations
 						.flatMap((item) => item.attributes)
-						.map(([key, value]) => `${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.map(([key, value]) => `• ${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.join('<br>');
+					const tags = test.tags
+						.map((tag) => `• ${escapeTableCell(tag)}`)
 						.join('<br>');
 					const errors = test.results
 						.flatMap((result) => result.errors)
@@ -212,7 +215,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${attributes} | ${formatDuration(duration)} | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${attributes} | ${formatDuration(duration)} | ${retries || ''} | ${tags} |`;
 				})
 				.join('\n');
 

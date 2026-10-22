@@ -62,11 +62,11 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('| smoke, regression |');
+	expect(report).toContain('| • smoke<br>• regression |');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
-	expect(report).toContain('smoke, regression');
+	expect(report).toContain('• smoke<br>• regression');
 	expect(report).toContain(
 		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',
 	);
@@ -96,7 +96,7 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		'| Status | Test | Attributes | Duration | Retries | Tags |',
 	);
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | attributes.spec.ts &gt; reports metadata | owner: vadym.nastoiashchyi<br>component: checkout | 250ms |  |  |',
+		'| <span title="Passed">✓</span> Passed | attributes.spec.ts &gt; reports metadata | • owner: vadym.nastoiashchyi<br>• component: checkout | 250ms |  |  |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
