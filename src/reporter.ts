@@ -177,7 +177,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.map(([key, value]) => `• ${escapeTableCell(key)}: ${escapeTableCell(value)}`)
 						.join('<br>');
 					const tags = test.tags
-						.map((tag) => `• ${escapeTableCell(tag)}`)
+						.map((tag) => `• ${escapeTableCell(tag.replace(/^@/, ''))}`)
 						.join('<br>');
 					const errors = test.results
 						.flatMap((result) => result.errors)

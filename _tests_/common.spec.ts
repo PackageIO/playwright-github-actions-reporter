@@ -34,7 +34,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		outcome: () => 'expected',
 		parent: { project: () => ({ name: 'linux / storageState' }) },
 		results: [{ duration: 5354, errors: [] }],
-		tags: ['smoke', 'regression'],
+		tags: ['@smoke', '@regression'],
 		titlePath: () => [
 			'storageState.spec.ts',
 			'setup storage state with cookies',
