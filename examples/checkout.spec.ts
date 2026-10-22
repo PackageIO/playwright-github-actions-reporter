@@ -5,6 +5,15 @@ test.describe('Cart management', () => {
 		'adds a product to the cart',
 		{
 			tag: ['@smoke', '@cart'],
+		},
+		() => {
+			expect(['notebook']).toContain('notebook');
+		},
+	);
+
+	test(
+		'updates the item quantity',
+		{
 			annotation: {
 				type: 'test metadata',
 				description: JSON.stringify([
@@ -14,13 +23,9 @@ test.describe('Cart management', () => {
 			},
 		},
 		() => {
-			expect(['notebook']).toContain('notebook');
+			expect(2 * 3).toBe(6);
 		},
 	);
-
-	test('updates the item quantity', () => {
-		expect(2 * 3).toBe(6);
-	});
 
 	test.describe('Saved carts', () => {
 		test('restores saved items', () => {

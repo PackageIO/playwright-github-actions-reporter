@@ -62,7 +62,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('<br><em>tags: smoke·regression</em>');
+	expect(report).toContain('<br><br><em>tags: smoke·regression</em>');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
@@ -96,9 +96,31 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-			'| <span title="Passed">✓</span> Passed | reports metadata<br><em>tags: smoke·cart</em><br><em>attributes: owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
+			'| <span title="Passed">✓</span> Passed | reports metadata<br><br><em>tags: smoke·cart</em><br><em>attributes: owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
+});
+
+test('renders attributes on a separate line when no tags are present', () => {
+	const testCase = {
+		annotations: [
+			{
+				type: 'runtime metadata',
+				description: JSON.stringify([{ key: 'owner', value: 'checkout-team' }]),
+			},
+		],
+		location: { file: 'attributes-only.spec.ts' },
+		outcome: () => 'expected',
+		parent: { project: () => ({ name: 'Default' }) },
+		results: [{ duration: 250, errors: [] }],
+		tags: [],
+		titlePath: () => ['attributes-only.spec.ts', 'shows owner'],
+	} as unknown as TestCase;
+	const report = createReport([testCase], { duration: 250 } as FullResult);
+
+	expect(report).toContain(
+		'| <span title="Passed">✓</span> Passed | shows owner<br><br><em>attributes: owner: checkout-team</em> |  | 250ms |',
+	);
 });
 
 test('strips ANSI colors from rendered errors', () => {
