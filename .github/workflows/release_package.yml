@@ -1,8 +1,10 @@
 name: Release package
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+    paths:
+      - package.json
 permissions:
   contents: write
   id-token: write
@@ -23,14 +25,15 @@ jobs:
       - name: Ensure npm supports trusted publishing
         run: npm install --global 'npm@^11.5.1'
 
-      - name: Verify tag matches package version
+      - name: Set release tag from package version
         run: |
           package_version="$(node -p "require('./package.json').version")"
-          tag_version="${GITHUB_REF_NAME#v}"
-          if [ "$tag_version" != "$package_version" ]; then
-            echo "::error::Tag v$tag_version does not match package.json version $package_version."
+          release_tag="v$package_version"
+          if ! git check-ref-format "refs/tags/$release_tag"; then
+            echo "::error::package.json version $package_version does not produce a valid release tag."
             exit 1
           fi
+          echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         run: npm ci
@@ -54,5 +57,6 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
