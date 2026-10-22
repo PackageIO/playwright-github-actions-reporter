@@ -108,6 +108,19 @@ function renderOutcomeCounts(counts: TestCounts): string {
 	return `Passed: ${counts.passed} · Failed: ${counts.failed} · Flaky: ${counts.flaky} · Skipped: ${counts.skipped}`;
 }
 
+function formatDuration(durationMs: number): string {
+	const totalSeconds = durationMs / 1000;
+	if (totalSeconds < 60) return `${totalSeconds.toFixed(2)}s`;
+
+	const hours = Math.floor(totalSeconds / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const seconds = Math.floor(totalSeconds % 60);
+	const remainder = (totalSeconds % 1).toFixed(2).slice(1);
+	const secondsText = `${seconds}${remainder}s`;
+	if (hours > 0) return `${hours}h ${minutes}m ${secondsText}`;
+	return `${minutes}m ${secondsText}`;
+}
+
 function renderTestDetails(tests: readonly TestCase[]): string {
 	return groupTests(tests)
 		.map((group) => {
@@ -177,12 +190,12 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${(duration / 1000).toFixed(3)}s | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${formatDuration(duration)} | ${retries || ''} | ${escapeTableCell(test.tags.join(', '))} |`;
 				})
 				.join('\n');
 
 			return `<details>
-<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${(duration / 1000).toFixed(2)}s]</em></summary>
+<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
 | Status | Test | Duration | Retries | Tags |
 | --- | --- | ---: | ---: | --- |
@@ -204,7 +217,7 @@ function renderHeader(
 
 **Total: ${counts.all}** · *[${renderOutcomeCounts(counts)}]*
 
-*Generated: ${formatDateTime(new Date())} · Execution time: ${(runResult.duration / 1000).toFixed(2)}s*
+*Generated: ${formatDateTime(new Date())} · Execution time: ${formatDuration(runResult.duration)}*
 
 ---
 `;
