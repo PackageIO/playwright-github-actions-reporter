@@ -51,18 +51,18 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	);
 	expect(report).toMatch(/Execution time: 5s\*\n\n---/);
 	expect(report).toContain(
-		'<table width="100%">',
+		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
 		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5s]</em></summary>',
 	);
-	expect(report).toContain('<td><span title="Passed">✓</span> Passed</td>');
+	expect(report).toContain('| <span title="Passed">✓</span> Passed |');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('<br><br><em>tags:</em> smoke·regression');
+	expect(report).toContain('<br><br><strong><em>tags:</em></strong> smoke·regression');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
@@ -93,10 +93,10 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
 	expect(report).toContain(
-		'<table width="100%">',
+		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'<td><span title="Passed">✓</span> Passed</td><td>reports metadata<br><br><em>tags:</em> smoke·cart<br><em>attributes:</em> owner: vadym.nastoiashchyi·component: checkout</td><td></td><td>250ms</td>',
+		'| <span title="Passed">✓</span> Passed | reports metadata<br><br><strong><em>tags:</em></strong> smoke·cart<br><strong><em>attributes:</em></strong> owner: vadym.nastoiashchyi·component: checkout |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
@@ -119,7 +119,7 @@ test('renders attributes on a separate line when no tags are present', () => {
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
 	expect(report).toContain(
-		'<td><span title="Passed">✓</span> Passed</td><td>shows owner<br><br><em>attributes:</em> owner: checkout-team</td><td></td><td>250ms</td>',
+		'| <span title="Passed">✓</span> Passed | shows owner<br><br><strong><em>attributes:</em></strong> owner: checkout-team |  | 250ms |',
 	);
 });
 
@@ -146,7 +146,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'<td><span title="Failed">✗</span> Failed</td><td>fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details></td><td></td><td>010ms</td>',
+		'| <span title="Failed">✗</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');

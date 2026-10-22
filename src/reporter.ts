@@ -180,9 +180,9 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
 						.join('·');
 					const metadata = [
-						tags ? `<br><br><em>tags:</em> ${tags}` : '',
+						tags ? `<br><br><strong><em>tags:</em></strong> ${tags}` : '',
 						attributes
-							? `${tags ? '<br>' : '<br><br>'}<em>attributes:</em> ${attributes}`
+							? `${tags ? '<br>' : '<br><br>'}<strong><em>attributes:</em></strong> ${attributes}`
 							: '',
 					].join('');
 					const errors = test.results
@@ -228,19 +228,16 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `<tr><td>${renderTestStatus(test.outcome())}</td><td>${escapeTableCell(title)}${metadata}${annotations}${errorText}</td><td>${retries || ''}</td><td>${formatDuration(duration)}</td></tr>`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${metadata}${annotations}${errorText} | ${retries || ''} | ${formatDuration(duration)} |`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
-<table width="100%">
-<thead><tr><th>Status</th><th>Test</th><th align="right">Retries</th><th align="right">Duration</th></tr></thead>
-<tbody>
+| Status | Test | Retries | Duration |
+| --- | --- | ---: | ---: |
 ${rows}
-</tbody>
-</table>
 
 </details>`;
 		})
