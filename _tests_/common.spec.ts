@@ -62,7 +62,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('<br><br><strong>tags:</strong> smoke·regression');
+	expect(report).toContain('<br><br><em>tags:</em> smoke·regression');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
@@ -96,7 +96,7 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		'<table width="100%">',
 	);
 	expect(report).toContain(
-		'<td><span title="Passed">✓</span> Passed</td><td>reports metadata<br><br><strong>tags:</strong> smoke·cart<br><strong>attributes:</strong> owner: vadym.nastoiashchyi·component: checkout</td><td></td><td>250ms</td>',
+		'<td><span title="Passed">✓</span> Passed</td><td>reports metadata<br><br><em>tags:</em> smoke·cart<br><em>attributes:</em> owner: vadym.nastoiashchyi·component: checkout</td><td></td><td>250ms</td>',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
@@ -119,7 +119,7 @@ test('renders attributes on a separate line when no tags are present', () => {
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
 	expect(report).toContain(
-		'<td><span title="Passed">✓</span> Passed</td><td>shows owner<br><br><strong>attributes:</strong> owner: checkout-team</td><td></td><td>250ms</td>',
+		'<td><span title="Passed">✓</span> Passed</td><td>shows owner<br><br><em>attributes:</em> owner: checkout-team</td><td></td><td>250ms</td>',
 	);
 });
 
