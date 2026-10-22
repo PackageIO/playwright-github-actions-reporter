@@ -59,7 +59,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toContain('| <span title="Passed">✓</span> Passed |');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
-		'ui/storageState.spec.ts &gt; setup storage state with cookies',
+		'setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
 	expect(report).toContain('<em>tags: smoke·regression</em>');
@@ -96,7 +96,7 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | attributes.spec.ts &gt; reports metadata<br><em>tags: smoke·cart</em><br><em>attributes: owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
+			'| <span title="Passed">✓</span> Passed | reports metadata<br><em>tags: smoke·cart</em><br><em>attributes: owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
@@ -124,7 +124,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">✗</span> Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
+		'| <span title="Failed">✗</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');

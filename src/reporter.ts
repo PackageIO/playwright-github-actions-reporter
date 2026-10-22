@@ -160,7 +160,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 								part !== basename(test.location.file) &&
 								part !== group.project,
 						);
-					const title = [group.file, ...titleParts].join(' > ');
+					const title = titleParts.join(' > ');
 					const duration = test.results.reduce(
 						(total, result) => total + result.duration,
 						0,
