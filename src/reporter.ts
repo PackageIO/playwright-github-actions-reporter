@@ -179,6 +179,12 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 					const tags = test.tags
 						.map((tag) => `• ${escapeTableCell(tag.replace(/^@/, ''))}`)
 						.join('<br>');
+					const metadata = [
+						tags ? `<br><strong>Tags:</strong><br>${tags}` : '',
+						attributes
+							? `<br><strong>Attributes:</strong><br>${attributes}`
+							: '',
+					].join('');
 					const errors = test.results
 						.flatMap((result) => result.errors)
 						.map((error) => error.message ?? error.value ?? error.stack ?? '')
@@ -215,15 +221,15 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						)
 						.join('');
 
-					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${annotations}${errorText} | ${tags} | ${attributes} | ${retries || ''} | ${formatDuration(duration)} |`;
+					return `| ${renderTestStatus(test.outcome())} | ${escapeTableCell(title)}${metadata}${annotations}${errorText} | ${retries || ''} | ${formatDuration(duration)} |`;
 				})
 				.join('\n');
 
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
-| Status | Test | Tags | Attributes | Retries | Duration |
-| --- | --- | --- | --- | ---: | ---: |
+| Status | Test | Retries | Duration |
+| --- | --- | ---: | ---: |
 ${rows}
 
 </details>`;

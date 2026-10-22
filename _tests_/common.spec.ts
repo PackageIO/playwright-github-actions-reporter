@@ -51,7 +51,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	);
 	expect(report).toMatch(/Execution time: 5s\*\n\n---/);
 	expect(report).toContain(
-		'| Status | Test | Tags | Attributes | Retries | Duration |',
+		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
 		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5s]</em></summary>',
@@ -62,7 +62,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'ui/storageState.spec.ts &gt; setup storage state with cookies',
 	);
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('| • smoke<br>• regression |');
+	expect(report).toContain('<strong>Tags:</strong><br>• smoke<br>• regression');
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
@@ -93,10 +93,10 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
 	expect(report).toContain(
-		'| Status | Test | Tags | Attributes | Retries | Duration |',
+		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | attributes.spec.ts &gt; reports metadata |  | • owner: vadym.nastoiashchyi<br>• component: checkout |  | 250ms |',
+		'| <span title="Passed">✓</span> Passed | attributes.spec.ts &gt; reports metadata<br><strong>Attributes:</strong><br>• owner: vadym.nastoiashchyi<br>• component: checkout |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
@@ -124,7 +124,7 @@ test('strips ANSI colors from rendered errors', () => {
 
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">✗</span> Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  |  |  | 010ms |',
+		'| <span title="Failed">✗</span> Failed | error.spec.ts &gt; fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
