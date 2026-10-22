@@ -156,7 +156,7 @@ test('strips ANSI colors from rendered errors', () => {
 	expect(report).not.toContain('\u001b');
 });
 
-test('renders each test error in a numbered collapsible section', () => {
+test('renders only the first error from each attempt with the correct retry label', () => {
 	const failedTest = {
 		annotations: [],
 		location: { file: 'error.spec.ts' },
@@ -167,8 +167,14 @@ test('renders each test error in a numbered collapsible section', () => {
 				duration: 10,
 				errors: [
 					{ message: 'First failure' },
-					{ message: 'Second failure' },
-					{ message: ' \n ' },
+					{ message: 'Additional failure from the same attempt' },
+				],
+			},
+			{
+				duration: 10,
+				errors: [
+					{ message: 'Retry failure' },
+					{ message: 'Additional retry failure' },
 				],
 			},
 		],
@@ -181,11 +187,10 @@ test('renders each test error in a numbered collapsible section', () => {
 		'<summary><em>Error details</em></summary><pre>First failure</pre></details>',
 	);
 	expect(report).toContain(
-		'<summary><em>Error details (retry 1)</em></summary><pre>Second failure</pre></details>',
+		'<summary><em>Error details (retry 1)</em></summary><pre>Retry failure</pre></details>',
 	);
-	expect(report).toContain(
-		'</details><details><summary><em>Error details (retry 1)</em></summary>',
-	);
+	expect(report).not.toContain('Additional failure from the same attempt');
+	expect(report).not.toContain('Additional retry failure');
 	expect(report).not.toContain('Error details (retry 2)');
 	expect(report).not.toContain('<pre></pre>');
 });

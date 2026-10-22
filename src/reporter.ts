@@ -186,10 +186,17 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 							: '',
 					].join('');
 					const errors = test.results
-						.flatMap((result) => result.errors)
-						.map((error) => error.message ?? error.value ?? error.stack ?? '')
-						.map(stripAnsi)
-						.filter((error) => error.trim().length > 0);
+						.map((result) =>
+							result.errors
+								.map((error) => error.message ?? error.value ?? error.stack ?? '')
+								.map(stripAnsi)
+								.find((error) => error.trim().length > 0),
+						)
+						.map((error, retry) => ({ error, retry }))
+						.filter(
+							(entry): entry is { error: string; retry: number } =>
+								typeof entry.error === 'string',
+						);
 					const annotations = test.annotations
 						.filter(
 							(annotation) =>
@@ -216,8 +223,8 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 
 					const errorText = errors
 						.map(
-							(error, index) =>
-								`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${index > 0 ? ` (retry ${index})` : ''}</em></summary><pre>${escapeHtml(error).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
+							({ error, retry }, index) =>
+								`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${retry > 0 ? ` (retry ${retry})` : ''}</em></summary><pre>${escapeHtml(error).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
 						)
 						.join('');
 
