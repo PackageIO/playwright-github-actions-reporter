@@ -134,7 +134,27 @@ function countTests(tests: readonly TestCase[]): TestCounts {
 }
 
 function renderOutcomeCounts(counts: TestCounts): string {
-	return `Passed: ${counts.passed} · Failed: ${counts.failed} · Flaky: ${counts.flaky} · Skipped: ${counts.skipped}`;
+	const statuses: Array<[string, number]> = [
+		['Passed', counts.passed],
+		['Failed', counts.failed],
+		['Flaky', counts.flaky],
+		['Skipped', counts.skipped],
+	];
+	return (
+		statuses
+			.filter(([, count]) => count > 0)
+			.map(([status, count]) => `${status}: ${count}`)
+			.join(' · ') || 'No tests'
+	);
+}
+
+function renderProjectNames(tests: readonly TestCase[]): string {
+	const projectNames = [
+		...new Set(tests.map((test) => test.parent.project()?.name || 'Default')),
+	];
+	return projectNames.length > 0
+		? projectNames.map(escapeHtml).join(', ')
+		: 'Default';
 }
 
 function renderTestDetails(tests: readonly TestCase[]): string {
@@ -262,7 +282,7 @@ function renderHeader(
 	return `
 ## Test results
 
-**Total: ${counts.all}** · *[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(runResult.duration)}]*
+**Total: ${counts.all}** · *${renderProjectNames(tests)} · [${renderOutcomeCounts(counts)} · Duration: ${formatDuration(runResult.duration)}]*
 
 *Generated: ${formatDateTime(new Date())} · Execution time: ${formatDuration(runResult.duration)}*
 
