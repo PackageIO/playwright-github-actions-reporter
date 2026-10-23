@@ -148,15 +148,6 @@ function renderOutcomeCounts(counts: TestCounts): string {
 	);
 }
 
-function renderProjectNames(tests: readonly TestCase[]): string {
-	const projectNames = [
-		...new Set(tests.map((test) => test.parent.project()?.name || 'Default')),
-	];
-	return projectNames.length > 0
-		? projectNames.map(escapeHtml).join(', ')
-		: 'Default';
-}
-
 function renderTestDetails(tests: readonly TestCase[]): string {
 	return groupTests(tests)
 		.map((group) => {
@@ -282,7 +273,7 @@ function renderHeader(
 	return `
 ## Test results
 
-**Total: ${counts.all}** · *${renderProjectNames(tests)} · [${renderOutcomeCounts(counts)} · Duration: ${formatDuration(runResult.duration)}]*
+**Total: ${counts.all}** · [${renderOutcomeCounts(counts)} · Duration: ${formatDuration(runResult.duration)}]
 
 *Generated: ${formatDateTime(new Date())} · Execution time: ${formatDuration(runResult.duration)}*
 
