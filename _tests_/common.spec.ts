@@ -56,6 +56,9 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toContain(
 		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5s]</em></summary>',
 	);
+	expect(report).toContain(
+		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
+	);
 	expect(report).toContain('| <span title="Passed">✓</span> Passed |');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(

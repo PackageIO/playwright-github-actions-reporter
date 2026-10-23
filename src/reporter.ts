@@ -242,6 +242,8 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
+<br>
+
 | Status | Test | Retries | Duration |
 | --- | --- | ---: | ---: |
 ${rows}
