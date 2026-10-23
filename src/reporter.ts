@@ -151,12 +151,17 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						: 'expected';
 			const rows = group.tests
 				.map((test) => {
+					const testFile = isAbsolute(test.location.file)
+						? relative(process.cwd(), test.location.file)
+						: test.location.file;
+					const normalizedTestFile = testFile.replace(/\\/g, '/').replace(/^\.\//, '');
 					const titleParts = test
 						.titlePath()
 						.filter(
 							(part) =>
 								part &&
 								part !== test.location.file &&
+								part.replace(/\\/g, '/').replace(/^\.\//, '') !== normalizedTestFile &&
 								part !== basename(test.location.file) &&
 								part !== group.project,
 						);
@@ -174,17 +179,13 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.filter((item) => item.attributes.length > 0);
 					const attributes = attributeAnnotations
 						.flatMap((item) => item.attributes)
-						.map(([key, value]) => `${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.map(([key, value]) => `${escapeTableCell(key)}.${escapeTableCell(value)}`);
+					const tags = [...test.tags
+						.map((tag) => escapeTableCell(tag.replace(/^@/, ''))), ...attributes]
 						.join('·');
-					const tags = test.tags
-						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
-						.join('·');
-					const metadata = [
-						tags ? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>` : '',
-						attributes
-							? `${tags ? '<br>' : '<br><br>'}<strong><em>attributes:</em></strong> <em>${attributes}</em>`
-							: '',
-					].join('');
+					const metadata = tags
+						? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>`
+						: '';
 					const errors = test.results
 						.map((result) =>
 							result.errors
