@@ -54,7 +54,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5s]</em></summary>',
+		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em></summary>\n\nPassed: 1 · Failed: 0 · Flaky: 0 · Skipped: 0 · Duration: 5s',
 	);
 	expect(report).toContain('| <span title="Passed">✓</span> Passed |');
 	expect(report).not.toContain('**PASS**');
@@ -141,7 +141,7 @@ test('omits a relative spec path from the test title', () => {
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | EDS tests in AEM cloud > checks chunks |',
+		'| <span title="Passed">✓</span> Passed | EDS tests in AEM cloud &gt; checks chunks |',
 	);
 	expect(report).not.toContain('Passed | integration/eds/eds.spec.ts');
 });

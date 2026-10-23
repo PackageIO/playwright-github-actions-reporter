@@ -234,7 +234,9 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 				.join('\n');
 
 			return `<details>
-<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
+<summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em></summary>
+
+${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}
 
 | Status | Test | Retries | Duration |
 | --- | --- | ---: | ---: |
