@@ -21,6 +21,30 @@ test('formats durations as seconds, minutes and hours', () => {
 	expect(formatDuration(3723456)).toBe('1h 2m 3.46s');
 });
 
+test('shows emojis only for nonzero outcomes in the overall summary', () => {
+	const makeTest = (outcome: string, index: number) =>
+		({
+			annotations: [],
+			location: { file: 'summary.spec.ts' },
+			outcome: () => outcome,
+			parent: { project: () => ({ name: 'Default' }) },
+			results: [{ duration: 1, errors: [] }],
+			tags: [],
+			titlePath: () => ['summary.spec.ts', `case ${index}`],
+		}) as unknown as TestCase;
+	const tests = [
+		...Array.from({ length: 5 }, (_, index) => makeTest('expected', index)),
+		makeTest('flaky', 5),
+		makeTest('skipped', 6),
+	];
+	const report = createReport(tests, { duration: 21 } as FullResult);
+
+	expect(report).toContain(
+		'Default · [✅ Passed: 5 · ⚠️ Flaky: 1 · ⏭️ Skipped: 1 · Duration: 021ms]',
+	);
+	expect(report).not.toContain('❌ Failed');
+});
+
 test('renders detailed test rows grouped by project and spec file', () => {
 	const testCase = {
 		annotations: [
@@ -44,7 +68,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('## Test results');
 	expect(report).toContain(
-		'**Total: 1** · *linux / storageState · [Passed: 1 · Duration: 5s]*',
+		'**Total: 1** · *linux / storageState · [✅ Passed: 1 · Duration: 5s]*',
 	);
 	expect(report).toMatch(
 		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5s/,
@@ -54,7 +78,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Duration: 5s]</em></summary>',
+		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[✅ Passed: 1 · Duration: 5s]</em></summary>',
 	);
 	expect(report).toContain(
 		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
@@ -167,7 +191,7 @@ test('strips ANSI colors from rendered errors', () => {
 	} as unknown as TestCase;
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
-	expect(report).toContain('Default · [Failed: 1 · Duration: 010ms]');
+	expect(report).toContain('Default · [❌ Failed: 1 · Duration: 010ms]');
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
 		'| <span title="Failed">✗</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
