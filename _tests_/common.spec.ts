@@ -40,9 +40,13 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	const report = createReport(tests, { duration: 21 } as FullResult);
 
 	expect(report).toContain(
-		'Default · [✅ Passed: 5 · ⚠️ Flaky: 1 · ⏭️ Skipped: 1 · Duration: 021ms]',
+		'Default · [Passed: 5 · Flaky: 1 · Skipped: 1 · Duration: 021ms]',
 	);
-	expect(report).not.toContain('❌ Failed');
+	expect(report).not.toContain('Failed: 0');
+	expect(report).not.toContain('✅ Passed:');
+	expect(report).toContain('<span title="Flaky">⚠️</span>');
+	expect(report).toContain('<span title="Skipped">⏭️</span>');
+	expect(report).toContain('<span title="Passed">✅</span> Passed |');
 });
 
 test('renders detailed test rows grouped by project and spec file', () => {
@@ -68,7 +72,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 
 	expect(report).toContain('## Test results');
 	expect(report).toContain(
-		'**Total: 1** · *linux / storageState · [✅ Passed: 1 · Duration: 5s]*',
+		'**Total: 1** · *linux / storageState · [Passed: 1 · Duration: 5s]*',
 	);
 	expect(report).toMatch(
 		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5s/,
@@ -78,12 +82,12 @@ test('renders detailed test rows grouped by project and spec file', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✓</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[✅ Passed: 1 · Duration: 5s]</em></summary>',
+		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Duration: 5s]</em></summary>',
 	);
 	expect(report).toContain(
 		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
 	);
-	expect(report).toContain('| <span title="Passed">✓</span> Passed |');
+	expect(report).toContain('| <span title="Passed">✅</span> Passed |');
 	expect(report).not.toContain('**PASS**');
 	expect(report).toContain(
 		'setup storage state with cookies',
@@ -123,7 +127,7 @@ test('renders attribute-shaped annotations as tags', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | reports metadata<br><br><strong><em>tags:</em></strong> <em>smoke·cart·owner.vadym.nastoiashchyi·component.checkout</em> |  | 250ms |',
+		'| <span title="Passed">✅</span> Passed | reports metadata<br><br><strong><em>tags:</em></strong> <em>smoke·cart·owner.vadym.nastoiashchyi·component.checkout</em> |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
@@ -146,7 +150,7 @@ test('renders attributes as tags when no test tags are present', () => {
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | shows owner<br><br><strong><em>tags:</em></strong> <em>owner.checkout-team</em> |  | 250ms |',
+		'| <span title="Passed">✅</span> Passed | shows owner<br><br><strong><em>tags:</em></strong> <em>owner.checkout-team</em> |  | 250ms |',
 	);
 });
 
@@ -191,14 +195,14 @@ test('strips ANSI colors from rendered errors', () => {
 	} as unknown as TestCase;
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
-	expect(report).toContain('Default · [❌ Failed: 1 · Duration: 010ms]');
+	expect(report).toContain('Default · [Failed: 1 · Duration: 010ms]');
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">✗</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
+		'| <span title="Failed">❌</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
-	expect(report).toContain('<span title="Failed">✗</span>');
+	expect(report).toContain('<span title="Failed">❌</span>');
 	expect(report).not.toContain('style=');
 	expect(report).not.toContain('**FAIL**');
 	expect(report).not.toContain('\u001b');

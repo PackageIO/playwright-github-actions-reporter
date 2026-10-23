@@ -19,10 +19,10 @@ type TestGroup = {
 };
 
 const statusLabel = {
-	expected: { character: '✓', title: 'Passed' },
-	unexpected: { character: '✗', title: 'Failed' },
-	flaky: { character: '⚠', title: 'Flaky' },
-	skipped: { character: '⊘', title: 'Skipped' },
+	expected: { character: '✅', title: 'Passed' },
+	unexpected: { character: '❌', title: 'Failed' },
+	flaky: { character: '⚠️', title: 'Flaky' },
+	skipped: { character: '⏭️', title: 'Skipped' },
 } as const;
 
 function escapeHtml(value: string): string {
@@ -135,10 +135,10 @@ function countTests(tests: readonly TestCase[]): TestCounts {
 
 function renderOutcomeCounts(counts: TestCounts): string {
 	const statuses: Array<[string, number]> = [
-		['✅ Passed', counts.passed],
-		['❌ Failed', counts.failed],
-		['⚠️ Flaky', counts.flaky],
-		['⏭️ Skipped', counts.skipped],
+		['Passed', counts.passed],
+		['Failed', counts.failed],
+		['Flaky', counts.flaky],
+		['Skipped', counts.skipped],
 	];
 	return (
 		statuses
