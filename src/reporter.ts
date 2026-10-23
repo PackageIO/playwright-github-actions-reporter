@@ -19,10 +19,10 @@ type TestGroup = {
 };
 
 const statusLabel = {
-	expected: { character: '✓', title: 'Passed' },
-	unexpected: { character: '✗', title: 'Failed' },
-	flaky: { character: '⚠', title: 'Flaky' },
-	skipped: { character: '⊘', title: 'Skipped' },
+	expected: { character: '✅', title: 'Passed' },
+	unexpected: { character: '❌', title: 'Failed' },
+	flaky: { character: '⚠️', title: 'Flaky' },
+	skipped: { character: '⏭️', title: 'Skipped' },
 } as const;
 
 function escapeHtml(value: string): string {
@@ -44,6 +44,16 @@ function escapeTableCell(value: string): string {
 
 function stripAnsi(value: string): string {
 	return value.replace(/\u001B\[[0-?]*[ -/]*[@-~]/g, '');
+}
+
+function isSpecFileTitle(title: string, file: string): boolean {
+	const normalizedTitle = title.replace(/\\/g, '/');
+	const normalizedFile = file.replace(/\\/g, '/');
+	return (
+		normalizedTitle === normalizedFile ||
+		normalizedTitle === basename(normalizedFile) ||
+		normalizedFile.endsWith(`/${normalizedTitle}`)
+	);
 }
 
 function renderStatus(outcome: keyof typeof statusLabel): string {
@@ -124,7 +134,27 @@ function countTests(tests: readonly TestCase[]): TestCounts {
 }
 
 function renderOutcomeCounts(counts: TestCounts): string {
-	return `Passed: ${counts.passed} · Failed: ${counts.failed} · Flaky: ${counts.flaky} · Skipped: ${counts.skipped}`;
+	const statuses: Array<[string, number]> = [
+		['Passed', counts.passed],
+		['Failed', counts.failed],
+		['Flaky', counts.flaky],
+		['Skipped', counts.skipped],
+	];
+	return (
+		statuses
+			.filter(([, count]) => count > 0)
+			.map(([status, count]) => `${status}: ${count}`)
+			.join(' · ') || 'No tests'
+	);
+}
+
+function renderProjectNames(tests: readonly TestCase[]): string {
+	const projectNames = [
+		...new Set(tests.map((test) => test.parent.project()?.name || 'Default')),
+	];
+	return projectNames.length > 0
+		? projectNames.map(escapeHtml).join(', ')
+		: 'Default';
 }
 
 function renderTestDetails(tests: readonly TestCase[]): string {
@@ -156,8 +186,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.filter(
 							(part) =>
 								part &&
-								part !== test.location.file &&
-								part !== basename(test.location.file) &&
+								!isSpecFileTitle(part, test.location.file) &&
 								part !== group.project,
 						);
 					const title = titleParts.join(' > ');
@@ -172,19 +201,17 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 							attributes: parseAttributes(annotation.description),
 						}))
 						.filter((item) => item.attributes.length > 0);
-					const attributes = attributeAnnotations
+					const attributeTags = attributeAnnotations
 						.flatMap((item) => item.attributes)
-						.map(([key, value]) => `${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.map(([key, value]) => `${escapeTableCell(key)}.${escapeTableCell(value)}`);
+					const tags = [
+						...test.tags.map((tag) => escapeTableCell(tag.replace(/^@/, ''))),
+						...attributeTags,
+					]
 						.join('·');
-					const tags = test.tags
-						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
-						.join('·');
-					const metadata = [
-						tags ? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>` : '',
-						attributes
-							? `${tags ? '<br>' : '<br><br>'}<strong><em>attributes:</em></strong> <em>${attributes}</em>`
-							: '',
-					].join('');
+					const metadata = tags
+						? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>`
+						: '';
 					const errors = test.results
 						.map((result) =>
 							result.errors
@@ -235,6 +262,8 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 			return `<details>
 <summary><strong>${renderStatus(groupOutcome)} ${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <em>[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(duration)}]</em></summary>
 
+<br>
+
 | Status | Test | Retries | Duration |
 | --- | --- | ---: | ---: |
 ${rows}
@@ -253,7 +282,7 @@ function renderHeader(
 	return `
 ## Test results
 
-**Total: ${counts.all}** · *[${renderOutcomeCounts(counts)}]*
+**Total: ${counts.all}** · *${renderProjectNames(tests)} · [${renderOutcomeCounts(counts)} · Duration: ${formatDuration(runResult.duration)}]*
 
 *Generated: ${formatDateTime(new Date())} · Execution time: ${formatDuration(runResult.duration)}*
 

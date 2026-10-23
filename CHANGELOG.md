@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-10-23
+
+### Changed
+- Show only nonzero outcome counts in report summaries, with the run duration and project name in the overall summary.
+- Use status emojis for each spec group and test row while keeping summary counts emoji-free.
+- Rename the report preview tests directory to `test_examples`.
+
 ## [1.4.0] - 2026-10-22
 
 ### Changed
