@@ -46,6 +46,16 @@ function stripAnsi(value: string): string {
 	return value.replace(/\u001B\[[0-?]*[ -/]*[@-~]/g, '');
 }
 
+function isSpecFileTitle(title: string, file: string): boolean {
+	const normalizedTitle = title.replace(/\\/g, '/');
+	const normalizedFile = file.replace(/\\/g, '/');
+	return (
+		normalizedTitle === normalizedFile ||
+		normalizedTitle === basename(normalizedFile) ||
+		normalizedFile.endsWith(`/${normalizedTitle}`)
+	);
+}
+
 function renderStatus(outcome: keyof typeof statusLabel): string {
 	const status = statusLabel[outcome];
 	return `<span title="${status.title}">${status.character}</span>`;
@@ -156,8 +166,7 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 						.filter(
 							(part) =>
 								part &&
-								part !== test.location.file &&
-								part !== basename(test.location.file) &&
+								!isSpecFileTitle(part, test.location.file) &&
 								part !== group.project,
 						);
 					const title = titleParts.join(' > ');
@@ -172,19 +181,17 @@ function renderTestDetails(tests: readonly TestCase[]): string {
 							attributes: parseAttributes(annotation.description),
 						}))
 						.filter((item) => item.attributes.length > 0);
-					const attributes = attributeAnnotations
+					const attributeTags = attributeAnnotations
 						.flatMap((item) => item.attributes)
-						.map(([key, value]) => `${escapeTableCell(key)}: ${escapeTableCell(value)}`)
+						.map(([key, value]) => `${escapeTableCell(key)}.${escapeTableCell(value)}`);
+					const tags = [
+						...test.tags.map((tag) => escapeTableCell(tag.replace(/^@/, ''))),
+						...attributeTags,
+					]
 						.join('·');
-					const tags = test.tags
-						.map((tag) => escapeTableCell(tag.replace(/^@/, '')))
-						.join('·');
-					const metadata = [
-						tags ? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>` : '',
-						attributes
-							? `${tags ? '<br>' : '<br><br>'}<strong><em>attributes:</em></strong> <em>${attributes}</em>`
-							: '',
-					].join('');
+					const metadata = tags
+						? `<br><br><strong><em>tags:</em></strong> <em>${tags}</em>`
+						: '';
 					const errors = test.results
 						.map((result) =>
 							result.errors

@@ -72,7 +72,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	);
 });
 
-test('renders attribute-shaped annotations in the Attributes column', () => {
+test('renders attribute-shaped annotations as tags', () => {
 	const testCase = {
 		annotations: [
 			{
@@ -96,12 +96,12 @@ test('renders attribute-shaped annotations in the Attributes column', () => {
 		'| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | reports metadata<br><br><strong><em>tags:</em></strong> <em>smoke·cart</em><br><strong><em>attributes:</em></strong> <em>owner: vadym.nastoiashchyi·component: checkout</em> |  | 250ms |',
+		'| <span title="Passed">✓</span> Passed | reports metadata<br><br><strong><em>tags:</em></strong> <em>smoke·cart·owner.vadym.nastoiashchyi·component.checkout</em> |  | 250ms |',
 	);
 	expect(report).not.toContain('<strong>runtime metadata</strong>');
 });
 
-test('renders attributes on a separate line when no tags are present', () => {
+test('renders attributes as tags when no test tags are present', () => {
 	const testCase = {
 		annotations: [
 			{
@@ -119,8 +119,28 @@ test('renders attributes on a separate line when no tags are present', () => {
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
 	expect(report).toContain(
-		'| <span title="Passed">✓</span> Passed | shows owner<br><br><strong><em>attributes:</em></strong> <em>owner: checkout-team</em> |  | 250ms |',
+		'| <span title="Passed">✓</span> Passed | shows owner<br><br><strong><em>tags:</em></strong> <em>owner.checkout-team</em> |  | 250ms |',
 	);
+});
+
+test('omits the spec file path from the test title', () => {
+	const testCase = {
+		annotations: [],
+		location: { file: 'integration/eds/eds.spec.ts' },
+		outcome: () => 'expected',
+		parent: { project: () => ({ name: 'Default' }) },
+		results: [{ duration: 250, errors: [] }],
+		tags: [],
+		titlePath: () => [
+			'integration/eds/eds.spec.ts',
+			'EDS tests in AEM cloud',
+			'[SAPONEDXXRAY-13336] Verify availability',
+		],
+	} as unknown as TestCase;
+	const report = createReport([testCase], { duration: 250 } as FullResult);
+
+	expect(report).toContain('EDS tests in AEM cloud &gt; [SAPONEDXXRAY-13336] Verify availability');
+	expect(report).not.toContain('eds.spec.ts &gt; EDS tests in AEM cloud');
 });
 
 test('strips ANSI colors from rendered errors', () => {
