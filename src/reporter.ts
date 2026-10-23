@@ -262,7 +262,7 @@ function renderHeader(
 	return `
 ## Test results
 
-**Total: ${counts.all}** · *[${renderOutcomeCounts(counts)}]*
+**Total: ${counts.all}** · *[${renderOutcomeCounts(counts)} · Duration: ${formatDuration(runResult.duration)}]*
 
 *Generated: ${formatDateTime(new Date())} · Execution time: ${formatDuration(runResult.duration)}*
 
