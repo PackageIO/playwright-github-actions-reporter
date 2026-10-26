@@ -12,6 +12,16 @@ test.describe('Authentication', () => {
 		expect('actual error').toBe('expected error');
 	});
 
+	test(
+		"keeps a user's authenticated session active while navigating between multiple protected areas of the application",
+		() => {
+			expect(
+				'expired',
+				'The session should remain active during navigation so the user does not need to authenticate again between protected areas.',
+			).toBe('active');
+		},
+	);
+
 	test.skip('sends a password reset email', () => {
 		expect(true).toBe(false);
 	});

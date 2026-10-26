@@ -187,7 +187,7 @@ test('wraps long test descriptions at 100 characters without truncating them', (
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 1 } as FullResult);
 
-	expect(report).toContain(`${'A'.repeat(100)}<br>${'A'.repeat(20)} ending`);
+	expect(report).toMatch(/A{100}<br>A{20} ending/);
 	expect(report).toContain('ending');
 });
 
@@ -204,9 +204,7 @@ test('wraps long error lines at 100 characters without truncating them', () => {
 	} as unknown as TestCase;
 	const report = createReport([failedTest], { duration: 1 } as FullResult);
 
-	expect(report).toContain(
-		`<pre>${'E'.repeat(100)}&#10;${'E'.repeat(20)} ending</pre>`,
-	);
+	expect(report).toMatch(/<pre>E{100}&#10;E{20} ending<\/pre>/);
 });
 
 test('strips ANSI colors from rendered errors', () => {
