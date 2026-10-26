@@ -174,6 +174,41 @@ test('omits the spec file path from the test title', () => {
 	expect(report).not.toContain('eds.spec.ts &gt; EDS tests in AEM cloud');
 });
 
+test('wraps long test descriptions at 100 characters without truncating them', () => {
+	const longTitle = `${'A'.repeat(120)} ending`;
+	const testCase = {
+		annotations: [],
+		location: { file: 'long-title.spec.ts' },
+		outcome: () => 'expected',
+		parent: { project: () => ({ name: 'Default' }) },
+		results: [{ duration: 1, errors: [] }],
+		tags: [],
+		titlePath: () => ['long-title.spec.ts', longTitle],
+	} as unknown as TestCase;
+	const report = createReport([testCase], { duration: 1 } as FullResult);
+
+	expect(report).toContain(`${'A'.repeat(100)}<br>${'A'.repeat(20)} ending`);
+	expect(report).toContain('ending');
+});
+
+test('wraps long error lines at 100 characters without truncating them', () => {
+	const longError = `${'E'.repeat(120)} ending`;
+	const failedTest = {
+		annotations: [],
+		location: { file: 'long-error.spec.ts' },
+		outcome: () => 'unexpected',
+		parent: { project: () => ({ name: 'Default' }) },
+		results: [{ duration: 1, errors: [{ message: longError }] }],
+		tags: [],
+		titlePath: () => ['long-error.spec.ts', 'reports long errors'],
+	} as unknown as TestCase;
+	const report = createReport([failedTest], { duration: 1 } as FullResult);
+
+	expect(report).toContain(
+		`<pre>${'E'.repeat(100)}&#10;${'E'.repeat(20)} ending</pre>`,
+	);
+});
+
 test('strips ANSI colors from rendered errors', () => {
 	const failedTest = {
 		annotations: [],
