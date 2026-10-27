@@ -26,9 +26,3 @@ test.describe('Authentication', () => {
 		});
 	});
 });
-
-test.describe('User session', () => {
-	test('keeps the session active', () => {
-		expect({ active: true }).toHaveProperty('active', true);
-	});
-});
