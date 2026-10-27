@@ -6,7 +6,7 @@ import type {
 	Reporter,
 	Suite,
 } from '@playwright/test/reporter';
-import { createReport } from './reporter.js';
+import { createReport } from './report/create-report.js';
 
 const summaryPath = process.env.GITHUB_STEP_SUMMARY;
 const isGitHubActions = process.env.GITHUB_ACTIONS;
