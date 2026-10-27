@@ -40,7 +40,7 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	const report = createReport(tests, { duration: 21 } as FullResult);
 
 	expect(report).toContain(
-		'## Playwright test results:\n\n🧪 7 tests · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped · ⏱️ Duration: 021ms',
+		'## Playwright test results:\n\n🧪 7 tests · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped · ⏱️ Duration: 21ms',
 	);
 	expect(report).not.toContain('Failed: 0');
 	expect(report).not.toContain('✅ Passed:');
@@ -192,11 +192,11 @@ test('strips ANSI colors from rendered errors', () => {
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
 	expect(report).toContain(
-		'🧪 1 test · ❌ 1 failed · ⏱️ Duration: 010ms',
+		'🧪 1 test · ❌ 1 failed · ⏱️ Duration: 10ms',
 	);
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">❌</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
+		'| <span title="Failed">❌</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 10ms |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');
