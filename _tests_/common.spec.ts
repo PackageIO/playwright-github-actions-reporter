@@ -78,7 +78,7 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	expect(report).toMatch(/\*\n\n---/);
 	expect(report).toContain('| Status | Test | Retries | Duration |');
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · ✅ 1 passed · 5s</summary>',
+		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <code>✅ 1 passed</code> · ⏱️ 5s</summary>',
 	);
 	expect(report).toContain(
 		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
