@@ -9,13 +9,16 @@ export function renderHeader(
 	runResult: FullResult,
 ): string {
 	const counts = countTests(tests);
+	const totalLabel = counts.all === 1 ? 'test' : 'tests';
+	const generatedAt = formatDateTime(new Date()).replace('/', ' at ');
 
 	return `
 ## Test results
 
-**Total: ${counts.all}** · ${renderOutcomeCounts(counts)} · Duration: ${formatDuration(runResult.duration)}
+**${counts.all} ${totalLabel}** · ${renderOutcomeCounts(counts)}
+**Run time:** ${formatDuration(runResult.duration)}
 
-*Generated: ${formatDateTime(new Date())} · Execution time: ${formatDuration(runResult.duration)}*
+*Generated ${generatedAt}*
 
 ---
 `;
