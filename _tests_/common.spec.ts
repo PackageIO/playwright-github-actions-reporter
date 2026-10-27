@@ -40,7 +40,7 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	const report = createReport(tests, { duration: 21 } as FullResult);
 
 	expect(report).toContain(
-		'**Total: 7** · [Passed: 5 · Flaky: 1 · Skipped: 1 · Duration: 021ms]',
+		'**Total: 7** · Passed: 5 · Flaky: 1 · Skipped: 1 · Duration: 021ms',
 	);
 	expect(report).not.toContain('Failed: 0');
 	expect(report).not.toContain('✅ Passed:');
@@ -71,14 +71,14 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	const report = createReport([testCase], { duration: 5354 } as FullResult);
 
 	expect(report).toContain('## Test results');
-	expect(report).toContain('**Total: 1** · [Passed: 1 · Duration: 5s]');
+	expect(report).toContain('**Total: 1** · Passed: 1 · Duration: 5s');
 	expect(report).toMatch(
 		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5s/,
 	);
 	expect(report).toMatch(/Execution time: 5s\*\n\n---/);
 	expect(report).toContain('| Status | Test | Retries | Duration |');
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Duration: 5s]</em></summary>',
+		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>Passed: 1 · Duration: 5s</em></summary>',
 	);
 	expect(report).toContain(
 		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
@@ -191,7 +191,7 @@ test('strips ANSI colors from rendered errors', () => {
 	} as unknown as TestCase;
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
-	expect(report).toContain('**Total: 1** · [Failed: 1 · Duration: 010ms]');
+	expect(report).toContain('**Total: 1** · Failed: 1 · Duration: 010ms');
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
 		'| <span title="Failed">❌</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
