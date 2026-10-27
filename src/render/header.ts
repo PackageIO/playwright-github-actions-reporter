@@ -15,8 +15,7 @@ export function renderHeader(
 	return `
 ## Test results
 
-**${counts.all} ${totalLabel}** · ${renderOutcomeCounts(counts)}
-**Run time:** ${formatDuration(runResult.duration)}
+**${counts.all} ${totalLabel}** · ${renderOutcomeCounts(counts)} · ⏱️ Duration: ${formatDuration(runResult.duration)}
 
 *Generated ${generatedAt}*
 
