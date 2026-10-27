@@ -39,9 +39,8 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	];
 	const report = createReport(tests, { duration: 21 } as FullResult);
 
-	expect(report).toContain(
-		'**7 tests** · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped',
-	);
+	expect(report).toContain('## Test results · `7 tests`');
+	expect(report).toContain('✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped');
 	expect(report).not.toContain('Failed: 0');
 	expect(report).not.toContain('✅ Passed:');
 	expect(report).toContain('<span title="Flaky">⚠️</span>');
@@ -70,8 +69,8 @@ test('renders grouped test rows with italic code counts and duration', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 5354 } as FullResult);
 
-	expect(report).toContain('## Test results');
-	expect(report).toContain('**1 test** · ✅ 1 passed');
+	expect(report).toContain('## Test results · `1 test`');
+	expect(report).toContain('✅ 1 passed · ⏱️ Duration: 5s');
 	expect(report).toMatch(
 		/Generated \d{4}-\d{2}-\d{2} at \d{2}:\d{2}:\d{2}/,
 	);
@@ -191,7 +190,8 @@ test('strips ANSI colors from rendered errors', () => {
 	} as unknown as TestCase;
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
-	expect(report).toContain('**1 test** · ❌ 1 failed');
+	expect(report).toContain('## Test results · `1 test`');
+	expect(report).toContain('❌ 1 failed · ⏱️ Duration: 010ms');
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
 		'| <span title="Failed">❌</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',

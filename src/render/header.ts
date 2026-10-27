@@ -13,9 +13,9 @@ export function renderHeader(
 	const generatedAt = formatDateTime(new Date()).replace('/', ' at ');
 
 	return `
-## Test results
+## Test results · \`${counts.all} ${totalLabel}\`
 
-**${counts.all} ${totalLabel}** · ${renderOutcomeCounts(counts)} · ⏱️ Duration: ${formatDuration(runResult.duration)}
+${renderOutcomeCounts(counts)} · ⏱️ Duration: ${formatDuration(runResult.duration)}
 
 *Generated ${generatedAt}*
 
