@@ -12,8 +12,8 @@ test.describe('Authentication', () => {
 		expect('actual error').toBe('expected error');
 	});
 
-	test('shows long errors wrapped at 120 characters', () => {
-		expect('x'.repeat(121)).toBe('y'.repeat(121));
+	test('shows long errors wrapped at 100 characters', () => {
+		expect('x'.repeat(101)).toBe('y'.repeat(101));
 	});
 
 	test.skip('sends a password reset email', () => {
