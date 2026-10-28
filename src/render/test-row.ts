@@ -1,5 +1,6 @@
 import type { TestCase } from '@playwright/test/reporter';
 import { formatDuration } from '../format/duration.js';
+import { wrapErrorLines } from '../format/wrap-lines.js';
 import { formatAnnotation, parseAttributes } from './annotations.js';
 import { escapeHtml, escapeTableCell, stripAnsi } from './escape.js';
 import { renderTestStatus } from './status.js';
@@ -69,7 +70,7 @@ export function renderTestRow(test: TestCase, project: string): string {
 	const errorText = errors
 		.map(
 			({ error, retry }, index) =>
-				`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${retry > 0 ? ` (retry ${retry})` : ''}</em></summary><pre>${escapeHtml(error).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
+				`${index === 0 ? '<br><br>' : ''}<details><summary><em>Error details${retry > 0 ? ` (retry ${retry})` : ''}</em></summary><pre>${escapeHtml(wrapErrorLines(error)).replace(/\|/g, '&#124;').replace(/\r?\n/g, '&#10;')}</pre></details>`,
 		)
 		.join('');
 

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Show the test total, outcome counts, and duration together in the overall summary.
 - Style outcome counts and duration as italic inline code in spec group summaries.
+- Wrap rendered error lines at 120 characters.
 
 ## [1.5.1] - 2026-10-23
 

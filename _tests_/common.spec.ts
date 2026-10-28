@@ -4,6 +4,7 @@ import type { FullResult, TestCase } from '@playwright/test/reporter';
 import GitHubActionsReporter from '../src/index.ts';
 import { formatDateTime } from '../src/format/date.ts';
 import { formatDuration } from '../src/format/duration.ts';
+import { wrapErrorLines } from '../src/format/wrap-lines.ts';
 import { createReport } from '../src/report/create-report.ts';
 
 const require = createRequire(import.meta.url);
@@ -19,6 +20,13 @@ test('formats durations as seconds, minutes and hours', () => {
 	expect(formatDuration(5354)).toBe('5s');
 	expect(formatDuration(150544)).toBe('2m 30.54s');
 	expect(formatDuration(3723456)).toBe('1h 2m 3.46s');
+});
+
+test('wraps error text at 120 characters and preserves existing lines', () => {
+	const longLine = 'x'.repeat(121);
+	expect(wrapErrorLines(`first\r\n${longLine}\n\nlast`)).toBe(
+		`first\n${'x'.repeat(120)}\nx\n\nlast`,
+	);
 });
 
 test('shows emojis only for nonzero outcomes in the overall summary', () => {
