@@ -1,5 +1,6 @@
 export function formatDuration(durationMs: number): string {
-	if (durationMs < 1000) return `${Math.round(durationMs).toString().padStart(3, '0')}ms`;
+	if (durationMs < 1000)
+		return `${Math.round(durationMs)}ms`;
 
 	const totalSeconds = durationMs / 1000;
 	if (totalSeconds < 60) return `${Math.round(totalSeconds)}s`;

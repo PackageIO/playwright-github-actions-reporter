@@ -55,8 +55,9 @@ No additional workflow permissions or reporter-specific action steps are needed.
 
 ## What the report shows
 
-- Overall and per-file counts for passed, failed, flaky, and skipped tests. Counts are shown only for outcomes that occurred.
-- Test duration and retry count. Duration includes all attempts.
+- An overall summary line with the total test count, counts for passed, failed, flaky, and skipped tests, and the run duration. Outcome counts are shown only when nonzero.
+- Per-file outcome counts and duration, with counts and duration styled as italic inline code.
+- Retry count and duration for each test. Duration includes all attempts.
 - Playwright tags, such as `@smoke` (shown as `smoke`).
 - Test annotations and collapsible error details, including errors from retries.
 - File groups organized by Playwright project.

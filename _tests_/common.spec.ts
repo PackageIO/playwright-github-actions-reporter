@@ -1,10 +1,11 @@
 import { createRequire } from 'node:module';
 import { expect, test } from '@playwright/test';
 import type { FullResult, TestCase } from '@playwright/test/reporter';
-import GitHubActionsReporter from '../dist/index.js';
-import { formatDateTime } from '../dist/utils/date.js';
-import { formatDuration } from '../dist/utils/duration.js';
-import { createReport } from '../dist/reporter.js';
+import GitHubActionsReporter from '../src/index.ts';
+import { formatDateTime } from '../src/format/date.ts';
+import { formatDuration } from '../src/format/duration.ts';
+import { wrapErrorLines } from '../src/format/wrap-lines.ts';
+import { createReport } from '../src/report/create-report.ts';
 
 const require = createRequire(import.meta.url);
 const packageMetadata = createRequire(import.meta.url)('../package.json');
@@ -19,6 +20,13 @@ test('formats durations as seconds, minutes and hours', () => {
 	expect(formatDuration(5354)).toBe('5s');
 	expect(formatDuration(150544)).toBe('2m 30.54s');
 	expect(formatDuration(3723456)).toBe('1h 2m 3.46s');
+});
+
+test('wraps error text at 80 characters and preserves existing lines', () => {
+	const longLine = 'x'.repeat(81);
+	expect(wrapErrorLines(`first\r\n${longLine}\n\nlast`)).toBe(
+		`first\n${'x'.repeat(80)}\nx\n\nlast`,
+	);
 });
 
 test('shows emojis only for nonzero outcomes in the overall summary', () => {
@@ -40,7 +48,7 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	const report = createReport(tests, { duration: 21 } as FullResult);
 
 	expect(report).toContain(
-		'**Total: 7** · [Passed: 5 · Flaky: 1 · Skipped: 1 · Duration: 021ms]',
+		'## Playwright test results:\n\n🧪 7 tests · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped · ⏱️ Duration: 21ms',
 	);
 	expect(report).not.toContain('Failed: 0');
 	expect(report).not.toContain('✅ Passed:');
@@ -49,7 +57,7 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	expect(report).toContain('<span title="Passed">✅</span> Passed |');
 });
 
-test('renders detailed test rows grouped by project and spec file', () => {
+test('renders grouped test rows with italic code counts and duration', () => {
 	const testCase = {
 		annotations: [
 			{ type: 'skip' },
@@ -70,30 +78,26 @@ test('renders detailed test rows grouped by project and spec file', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 5354 } as FullResult);
 
-	expect(report).toContain('## Test results');
-	expect(report).toContain(
-		'**Total: 1** · [Passed: 1 · Duration: 5s]',
-	);
+	expect(report).toContain('## Playwright test results:');
+	expect(report).toContain('🧪 1 test · ✅ 1 passed · ⏱️ Duration: 5s');
 	expect(report).toMatch(
-		/Generated: \d{4}-\d{2}-\d{2}\/\d{2}:\d{2}:\d{2} · Execution time: 5s/,
+		/Generated \d{4}-\d{2}-\d{2} at \d{2}:\d{2}:\d{2}/,
 	);
-	expect(report).toMatch(/Execution time: 5s\*\n\n---/);
+	expect(report).toMatch(/\*\n\n---/);
+	expect(report).toContain('| Status | Test | Retries | Duration |');
 	expect(report).toContain(
-		'| Status | Test | Retries | Duration |',
-	);
-	expect(report).toContain(
-		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em>[Passed: 1 · Duration: 5s]</em></summary>',
+		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em><code>✅ 1 passed · ⏱️ 5s</code></em></summary>',
 	);
 	expect(report).toContain(
 		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain('| <span title="Passed">✅</span> Passed |');
 	expect(report).not.toContain('**PASS**');
-	expect(report).toContain(
-		'setup storage state with cookies',
-	);
+	expect(report).toContain('setup storage state with cookies');
 	expect(report).toContain('| 5s |');
-	expect(report).toContain('<br><br><strong><em>tags:</em></strong> <em>smoke·regression</em>');
+	expect(report).toContain(
+		'<br><br><strong><em>tags:</em></strong> <em>smoke·regression</em>',
+	);
 	expect(report).not.toContain('| Project |');
 	expect(report).not.toContain('<strong>skip</strong>');
 	expect(report).not.toContain('test-status-filter');
@@ -123,9 +127,7 @@ test('renders attribute-shaped annotations as tags', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
-	expect(report).toContain(
-		'| Status | Test | Retries | Duration |',
-	);
+	expect(report).toContain('| Status | Test | Retries | Duration |');
 	expect(report).toContain(
 		'| <span title="Passed">✅</span> Passed | reports metadata<br><br><strong><em>tags:</em></strong> <em>smoke·cart·owner.vadym.nastoiashchyi·component.checkout</em> |  | 250ms |',
 	);
@@ -170,7 +172,9 @@ test('omits the spec file path from the test title', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 250 } as FullResult);
 
-	expect(report).toContain('EDS tests in AEM cloud &gt; [SAPONEDXXRAY-13336] Verify availability');
+	expect(report).toContain(
+		'EDS tests in AEM cloud &gt; [SAPONEDXXRAY-13336] Verify availability',
+	);
 	expect(report).not.toContain('eds.spec.ts &gt; EDS tests in AEM cloud');
 });
 
@@ -195,10 +199,12 @@ test('strips ANSI colors from rendered errors', () => {
 	} as unknown as TestCase;
 	const report = createReport([failedTest], { duration: 10 } as FullResult);
 
-	expect(report).toContain('**Total: 1** · [Failed: 1 · Duration: 010ms]');
+	expect(report).toContain(
+		'🧪 1 test · ❌ 1 failed · ⏱️ Duration: 10ms',
+	);
 	expect(report).toContain('Expected failure');
 	expect(report).toContain(
-		'| <span title="Failed">❌</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 010ms |',
+		'| <span title="Failed">❌</span> Failed | fails cleanly<br><br><details><summary><em>Error details</em></summary><pre>Expected failure&#10;Received &#124; value</pre></details> |  | 10ms |',
 	);
 	expect(report).toContain('<summary><em>Error details</em></summary>');
 	expect(report).not.toContain('colspan="5"><details>');

@@ -12,6 +12,10 @@ test.describe('Authentication', () => {
 		expect('actual error').toBe('expected error');
 	});
 
+	test('shows long errors wrapped at 80 characters', () => {
+		expect('x'.repeat(81)).toBe('y'.repeat(81));
+	});
+
 	test.skip('sends a password reset email', () => {
 		expect(true).toBe(false);
 	});
@@ -24,11 +28,5 @@ test.describe('Authentication', () => {
 		test('recovers after a transient challenge failure', ({}, testInfo) => {
 			expect(testInfo.retry).toBeGreaterThan(0);
 		});
-	});
-});
-
-test.describe('User session', () => {
-	test('keeps the session active', () => {
-		expect({ active: true }).toHaveProperty('active', true);
 	});
 });
