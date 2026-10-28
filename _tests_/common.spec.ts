@@ -22,10 +22,10 @@ test('formats durations as seconds, minutes and hours', () => {
 	expect(formatDuration(3723456)).toBe('1h 2m 3.46s');
 });
 
-test('wraps error text at 100 characters and preserves existing lines', () => {
-	const longLine = 'x'.repeat(101);
+test('wraps error text at 80 characters and preserves existing lines', () => {
+	const longLine = 'x'.repeat(81);
 	expect(wrapErrorLines(`first\r\n${longLine}\n\nlast`)).toBe(
-		`first\n${'x'.repeat(100)}\nx\n\nlast`,
+		`first\n${'x'.repeat(80)}\nx\n\nlast`,
 	);
 });
 

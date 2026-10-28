@@ -1,4 +1,4 @@
-const MAX_ERROR_LINE_LENGTH = 100;
+const MAX_ERROR_LINE_LENGTH = 80;
 
 export function wrapErrorLines(message: string): string {
 	return message
