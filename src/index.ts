@@ -22,7 +22,7 @@ export default class GitHubActionsReporter implements Reporter {
 	onBegin(_config: FullConfig, suite: Suite): void {
 		this.suite = suite;
 		process.stdout.write(
-			`${packageMetadata.name} v${packageMetadata.version}\n`,
+			`Using ${packageMetadata.name} v${packageMetadata.version}\n`,
 		);
 	}
 
