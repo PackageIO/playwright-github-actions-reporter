@@ -273,5 +273,5 @@ test('prints its package name and version when the run begins', () => {
 		process.stdout.write = originalWrite;
 	}
 
-	expect(output).toBe(`${packageMetadata.name} v${packageMetadata.version}\n`);
+	expect(output).toBe(`Using ${packageMetadata.name} v${packageMetadata.version}\n`);
 });
