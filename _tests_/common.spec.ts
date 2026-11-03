@@ -48,7 +48,7 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	const report = createReport(tests, { duration: 21 } as FullResult);
 
 	expect(report).toContain(
-		'## Playwright test results:\n\n🧪 7 tests · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped · ⏱️ Duration: 21ms',
+		'## 🎭Playwright test results:\n\n🧪 7 tests · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped · ⏱️ Duration: 21ms',
 	);
 	expect(report).not.toContain('Failed: 0');
 	expect(report).not.toContain('✅ Passed:');
@@ -78,7 +78,7 @@ test('renders grouped test rows with italic code counts and duration', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 5354 } as FullResult);
 
-	expect(report).toContain('## Playwright test results:');
+	expect(report).toContain('## 🎭Playwright test results:');
 	expect(report).toContain('🧪 1 test · ✅ 1 passed · ⏱️ Duration: 5s');
 	expect(report).toMatch(
 		/Generated \d{4}-\d{2}-\d{2} at \d{2}:\d{2}:\d{2}/,
