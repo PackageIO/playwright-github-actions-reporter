@@ -6,6 +6,5 @@ export function renderTestDetails(groups: readonly TestGroup[]): string {
 <summary>Show test details</summary>
 
 ${groups.map(renderTestGroup).join('\n')}
-
 </details>`;
 }

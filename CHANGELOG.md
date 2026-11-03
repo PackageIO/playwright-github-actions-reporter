@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.10.0] - 
 
+### Add
+- Collapsible file groups organized by Playwright project, each showing a grouped summary and details table.
+
 ### Changed
 - Prefix the startup message with "Using" when displaying the package name and version.
 
