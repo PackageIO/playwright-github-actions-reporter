@@ -86,7 +86,7 @@ test('renders grouped test rows with italic code counts and duration', () => {
 	expect(report).toMatch(/\*\n\n---/);
 	expect(report).toContain('| Status | Test | Retries | Duration |');
 	expect(report).toContain(
-		'<summary><span title="Passed">✅</span> storageState.spec.ts · <em>linux / storageState</em> · 🧪 1 test · <em><code>✅ 1 passed · ⏱️ 5s</code></em></summary>',
+		'<summary><span title="Passed">✅</span> storageState.spec.ts · <em>linux / storageState</em><em><code> · 🧪 1 test · ✅ 1 passed · ⏱️ 5s</code></em></summary>',
 	);
 	expect(report).toContain(
 		'<details>\n<summary>Show test details</summary>\n\n<br>\n\n<details>',
