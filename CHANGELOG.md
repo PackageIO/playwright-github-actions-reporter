@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Prefix the startup message with "Using" when displaying the package name and version.
+- Include the total test count in each file group summary.
 
 ## [1.6.0] - 2026-10-27
 
