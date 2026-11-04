@@ -42,5 +42,7 @@ ${groups.map(renderTestGroup).join('\n')}
 		.map((outcome) => renderOutcomeDetails(groups, outcome))
 		.filter((section) => section.length > 0);
 
-	return [allTests, ...outcomeDetails].join('\n');
+	if (outcomeDetails.length === 0) return allTests;
+
+	return `${outcomeDetails.join('\n')}\n\n---\n\n${allTests}`;
 }

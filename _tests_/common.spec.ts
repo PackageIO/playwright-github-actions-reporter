@@ -139,13 +139,18 @@ test('renders collapsible sections for present non-passed outcomes', () => {
 	const skippedStart = report.indexOf(
 		'<summary><span title="Skipped">⏭️</span> Skipped (1)</summary>',
 	);
+	const allTestsStart = report.indexOf('<summary>🧪 Show all</summary>');
 	const failedSection = report.slice(failedStart, flakyStart);
 	const flakySection = report.slice(flakyStart, skippedStart);
-	const skippedSection = report.slice(skippedStart);
+	const skippedSection = report.slice(skippedStart, allTestsStart);
 
 	expect(failedStart).toBeGreaterThan(-1);
 	expect(flakyStart).toBeGreaterThan(failedStart);
 	expect(skippedStart).toBeGreaterThan(flakyStart);
+	expect(allTestsStart).toBeGreaterThan(skippedStart);
+	expect(report).toContain(
+		'\n\n---\n\n<details>\n<summary>🧪 Show all</summary>',
+	);
 	expect(failedSection).toContain('failed case');
 	expect(failedSection).not.toContain('flaky case');
 	expect(failedSection).not.toContain('skipped case');
