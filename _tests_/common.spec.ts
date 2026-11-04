@@ -89,7 +89,7 @@ test('renders grouped test rows with italic code counts and duration', () => {
 		'<summary><span title="Passed">✅</span> storageState.spec.ts · <em>linux / storageState</em> · <em><code>🧪 1 test · ✅ 1 passed · ⏱️ 5s</code></em></summary>',
 	);
 	expect(report).toContain(
-		'<details>\n<summary>Show test details</summary>\n\n<br>\n\n<details>',
+		'<details>\n<summary>🧪 Show test all</summary>\n\n<br>\n\n<details>',
 	);
 	expect(report).toContain(
 		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
@@ -107,6 +107,86 @@ test('renders grouped test rows with italic code counts and duration', () => {
 	expect(report).toContain('smoke·regression');
 	expect(report).toContain(
 		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',
+	);
+});
+
+test('renders filtered sections only for outcomes present in the report', () => {
+	const makeTest = (outcome: string, title: string) =>
+		({
+			annotations: [],
+			location: { file: 'outcomes.spec.ts' },
+			outcome: () => outcome,
+			parent: { project: () => ({ name: 'Default' }) },
+			results: [{ duration: 1, errors: [] }],
+			tags: [],
+			titlePath: () => ['outcomes.spec.ts', title],
+		}) as unknown as TestCase;
+	const mixedReport = createReport(
+		[
+			makeTest('unexpected', 'failed case'),
+			makeTest('flaky', 'flaky case'),
+			makeTest('skipped', 'skipped case'),
+			makeTest('expected', 'passed case'),
+		],
+		{ duration: 4 } as FullResult,
+	);
+
+	for (const title of [
+		'❌ Show failed only',
+		'⚠️ Show Flaky only',
+		'⏭️ Show Skipped only',
+	]) {
+		expect(mixedReport).toContain(`<summary>${title}</summary>`);
+	}
+	const sectionPositions = [
+		'❌ Show failed only',
+		'⚠️ Show Flaky only',
+		'⏭️ Show Skipped only',
+		'🧪 Show test all',
+	].map((title) => mixedReport.indexOf(`<summary>${title}</summary>`));
+	expect(sectionPositions[0]).toBeLessThan(sectionPositions[1]);
+	expect(sectionPositions[1]).toBeLessThan(sectionPositions[2]);
+	expect(sectionPositions[2]).toBeLessThan(sectionPositions[3]);
+	expect(mixedReport).toContain('<summary>🧪 Show test all</summary>');
+
+	const section = (title: string, nextTitle?: string) => {
+		const start = mixedReport.indexOf(`<summary>${title}</summary>`);
+		const end = nextTitle
+			? mixedReport.indexOf(`<summary>${nextTitle}</summary>`)
+			: undefined;
+		return mixedReport.slice(start, end);
+	};
+	expect(section('❌ Show failed only', '⚠️ Show Flaky only')).toContain(
+		'failed case',
+	);
+	expect(section('❌ Show failed only', '⚠️ Show Flaky only')).not.toContain(
+		'flaky case',
+	);
+	expect(section('⚠️ Show Flaky only', '⏭️ Show Skipped only')).toContain(
+		'flaky case',
+	);
+	expect(section('⚠️ Show Flaky only', '⏭️ Show Skipped only')).not.toContain(
+		'skipped case',
+	);
+	expect(section('⏭️ Show Skipped only', '🧪 Show test all')).toContain(
+		'skipped case',
+	);
+	expect(section('⏭️ Show Skipped only', '🧪 Show test all')).not.toContain(
+		'passed case',
+	);
+
+	const passedOnlyReport = createReport([makeTest('expected', 'passed case')], {
+		duration: 1,
+	} as FullResult);
+	expect(passedOnlyReport).toContain('<summary>🧪 Show test all</summary>');
+	expect(passedOnlyReport).not.toContain(
+		'<summary>❌ Show failed only</summary>',
+	);
+	expect(passedOnlyReport).not.toContain(
+		'<summary>⚠️ Show Flaky only</summary>',
+	);
+	expect(passedOnlyReport).not.toContain(
+		'<summary>⏭️ Show Skipped only</summary>',
 	);
 });
 
