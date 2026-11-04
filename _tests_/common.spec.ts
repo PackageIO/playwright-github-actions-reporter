@@ -1,10 +1,10 @@
 import { createRequire } from 'node:module';
 import { expect, test } from '@playwright/test';
 import type { FullResult, TestCase } from '@playwright/test/reporter';
-import GitHubActionsReporter from '../src/index.ts';
 import { formatDateTime } from '../src/format/date.ts';
 import { formatDuration } from '../src/format/duration.ts';
 import { wrapErrorLines } from '../src/format/wrap-lines.ts';
+import GitHubActionsReporter from '../src/index.ts';
 import { createReport } from '../src/report/create-report.ts';
 
 const require = createRequire(import.meta.url);
@@ -108,6 +108,61 @@ test('renders grouped test rows with italic code counts and duration', () => {
 	expect(report).toContain(
 		'<a href="https://example.test/case/1" rel="noopener noreferrer">https://example.test/case/1</a>',
 	);
+});
+
+test('renders collapsible sections for present non-passed outcomes', () => {
+	const makeTest = (outcome: string, file: string, title: string) =>
+		({
+			annotations: [],
+			location: { file },
+			outcome: () => outcome,
+			parent: { project: () => ({ name: 'Default' }) },
+			results: [{ duration: 1, errors: [] }],
+			tags: [],
+			titlePath: () => [file, title],
+		}) as unknown as TestCase;
+	const report = createReport(
+		[
+			makeTest('unexpected', 'failed.spec.ts', 'failed case'),
+			makeTest('flaky', 'flaky.spec.ts', 'flaky case'),
+			makeTest('skipped', 'skipped.spec.ts', 'skipped case'),
+			makeTest('expected', 'passed.spec.ts', 'passed case'),
+		],
+		{ duration: 4 } as FullResult,
+	);
+	const failedStart = report.indexOf(
+		'<summary><span title="Failed">❌</span> Failed (1)</summary>',
+	);
+	const flakyStart = report.indexOf(
+		'<summary><span title="Flaky">⚠️</span> Flaky (1)</summary>',
+	);
+	const skippedStart = report.indexOf(
+		'<summary><span title="Skipped">⏭️</span> Skipped (1)</summary>',
+	);
+	const failedSection = report.slice(failedStart, flakyStart);
+	const flakySection = report.slice(flakyStart, skippedStart);
+	const skippedSection = report.slice(skippedStart);
+
+	expect(failedStart).toBeGreaterThan(-1);
+	expect(flakyStart).toBeGreaterThan(failedStart);
+	expect(skippedStart).toBeGreaterThan(flakyStart);
+	expect(failedSection).toContain('failed case');
+	expect(failedSection).not.toContain('flaky case');
+	expect(failedSection).not.toContain('skipped case');
+	expect(flakySection).toContain('flaky case');
+	expect(flakySection).not.toContain('failed case');
+	expect(flakySection).not.toContain('skipped case');
+	expect(skippedSection).toContain('skipped case');
+	expect(skippedSection).not.toContain('failed case');
+	expect(skippedSection).not.toContain('flaky case');
+
+	const passedOnlyReport = createReport(
+		[makeTest('expected', 'passed.spec.ts', 'passed case')],
+		{ duration: 1 } as FullResult,
+	);
+	expect(passedOnlyReport).not.toContain('Failed (');
+	expect(passedOnlyReport).not.toContain('Flaky (');
+	expect(passedOnlyReport).not.toContain('Skipped (');
 });
 
 test('renders attribute-shaped annotations as tags', () => {
