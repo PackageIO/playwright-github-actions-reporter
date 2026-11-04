@@ -22,21 +22,15 @@ function renderOutcomeDetails(
 	if (count === 0) return '';
 
 	return `<details>
-<summary>${renderTestStatus(outcome)} (${count})</summary>
-
-<br>
-
-${matchingGroups.map(renderTestGroup).join('\n<br>\n<br>\n')}
+<summary><strong>${renderTestStatus(outcome)} (${count})</strong></summary>
+${matchingGroups.map(renderTestGroup).join('\n')}
 </details>`;
 }
 
 export function renderTestDetails(groups: readonly TestGroup[]): string {
 	const allTests = `<details>
-<summary>🧪 Show all</summary>
-
-<br>
-
-${groups.map(renderTestGroup).join('\n<br>\n<br>\n')}
+<summary><strong>🧪 Show all</strong></summary>
+${groups.map(renderTestGroup).join('\n')}
 </details>`;
 	const outcomeDetails = filterableOutcomes
 		.map((outcome) => renderOutcomeDetails(groups, outcome))

@@ -17,12 +17,8 @@ export function renderTestGroup(group: TestGroup): string {
 
 	return `<details>
 <summary>${renderStatus(groupOutcome(group.tests))} <strong>${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <code>🧪 ${counts.all} ${testLabel} · ${renderOutcomeCounts(counts)} · ⏱️ ${formatDuration(duration)}</code></summary>
-
-<br>
-
 | Status | Test | Retries | Duration |
 | --- | --- | ---: | ---: |
 ${rows}
-
 </details>`;
 }
