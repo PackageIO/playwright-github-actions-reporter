@@ -89,10 +89,10 @@ test('renders grouped test rows with italic code counts and duration', () => {
 		'<summary><span title="Passed">✅</span> storageState.spec.ts · <em>linux / storageState</em> · <em><code>🧪 1 test · ✅ 1 passed · ⏱️ 5s</code></em></summary>',
 	);
 	expect(report).toContain(
-		'<details>\n<summary>🧪 Show all</summary>\n\n<br>\n\n<details>',
+		'<details>\n<summary>🧪 Show all</summary>\n\n<br>\n\n> <details>',
 	);
 	expect(report).toContain(
-		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
+		'</summary>\n>\n> <br>\n>\n> | Status | Test | Retries | Duration |',
 	);
 	expect(report).toContain('| <span title="Passed">✅</span> Passed |');
 	expect(report).not.toContain('**PASS**');
@@ -154,7 +154,10 @@ test('renders collapsible sections for present non-passed outcomes', () => {
 	);
 	expect(failedSection).toContain('failed case');
 	expect(failedSection).toContain('other failed case');
-	expect(failedSection).toContain('</details>\n<br>\n<details>');
+	expect(failedSection).toContain('> </details>\n<br>\n> <details>');
+	expect(failedSection).toContain(
+		'> | Status | Test | Retries | Duration |',
+	);
 	expect(failedSection).not.toContain('flaky case');
 	expect(failedSection).not.toContain('skipped case');
 	expect(flakySection).toContain('flaky case');
