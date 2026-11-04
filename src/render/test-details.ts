@@ -3,7 +3,7 @@ import { renderTestGroup } from './test-group.js';
 
 export function renderTestDetails(groups: readonly TestGroup[]): string {
 	return `<details>
-<summary>Show test details</summary>
+<summary>🧪 Show all</summary>
 
 <br>
 
