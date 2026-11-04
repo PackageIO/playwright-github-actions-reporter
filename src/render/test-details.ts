@@ -4,13 +4,6 @@ import { renderTestGroup } from './test-group.js';
 
 const filterableOutcomes = ['unexpected', 'flaky', 'skipped'] as const;
 
-function renderIndentedTestGroup(group: TestGroup): string {
-	return renderTestGroup(group)
-		.split('\n')
-		.map((line) => (line ? `> ${line}` : '>'))
-		.join('\n');
-}
-
 function renderOutcomeDetails(
 	groups: readonly TestGroup[],
 	outcome: (typeof filterableOutcomes)[number],
@@ -33,7 +26,7 @@ function renderOutcomeDetails(
 
 <br>
 
-${matchingGroups.map(renderIndentedTestGroup).join('\n<br>\n')}
+${matchingGroups.map(renderTestGroup).join('\n<br>\n')}
 </details>`;
 }
 
@@ -43,7 +36,7 @@ export function renderTestDetails(groups: readonly TestGroup[]): string {
 
 <br>
 
-${groups.map(renderIndentedTestGroup).join('\n<br>\n')}
+${groups.map(renderTestGroup).join('\n<br>\n')}
 </details>`;
 	const outcomeDetails = filterableOutcomes
 		.map((outcome) => renderOutcomeDetails(groups, outcome))
