@@ -26,7 +26,7 @@ function renderOutcomeDetails(
 
 <br>
 
-${matchingGroups.map(renderTestGroup).join('\n')}
+${matchingGroups.map(renderTestGroup).join('\n<br>\n')}
 </details>`;
 }
 
@@ -36,7 +36,7 @@ export function renderTestDetails(groups: readonly TestGroup[]): string {
 
 <br>
 
-${groups.map(renderTestGroup).join('\n')}
+${groups.map(renderTestGroup).join('\n<br>\n')}
 </details>`;
 	const outcomeDetails = filterableOutcomes
 		.map((outcome) => renderOutcomeDetails(groups, outcome))

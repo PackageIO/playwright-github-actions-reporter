@@ -124,6 +124,7 @@ test('renders collapsible sections for present non-passed outcomes', () => {
 	const report = createReport(
 		[
 			makeTest('unexpected', 'failed.spec.ts', 'failed case'),
+			makeTest('unexpected', 'other-failed.spec.ts', 'other failed case'),
 			makeTest('flaky', 'flaky.spec.ts', 'flaky case'),
 			makeTest('skipped', 'skipped.spec.ts', 'skipped case'),
 			makeTest('expected', 'passed.spec.ts', 'passed case'),
@@ -131,7 +132,7 @@ test('renders collapsible sections for present non-passed outcomes', () => {
 		{ duration: 4 } as FullResult,
 	);
 	const failedStart = report.indexOf(
-		'<summary><span title="Failed">❌</span> Failed (1)</summary>',
+		'<summary><span title="Failed">❌</span> Failed (2)</summary>',
 	);
 	const flakyStart = report.indexOf(
 		'<summary><span title="Flaky">⚠️</span> Flaky (1)</summary>',
@@ -152,6 +153,8 @@ test('renders collapsible sections for present non-passed outcomes', () => {
 		'\n\n---\n\n<details>\n<summary>🧪 Show all</summary>',
 	);
 	expect(failedSection).toContain('failed case');
+	expect(failedSection).toContain('other failed case');
+	expect(failedSection).toContain('</details>\n<br>\n<details>');
 	expect(failedSection).not.toContain('flaky case');
 	expect(failedSection).not.toContain('skipped case');
 	expect(flakySection).toContain('flaky case');
