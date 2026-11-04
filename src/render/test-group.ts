@@ -15,8 +15,8 @@ export function renderTestGroup(group: TestGroup): string {
 		.map((test) => renderTestRow(test, group.project))
 		.join('\n');
 
-	return `<details open>
-<summary>${renderStatus(groupOutcome(group.tests))} ${escapeHtml(basename(group.file))} · <em>${escapeHtml(group.project)}</em> · <em><code>🧪 ${counts.all} ${testLabel} · ${renderOutcomeCounts(counts)} · ⏱️ ${formatDuration(duration)}</code></em></summary>
+	return `<details>
+<summary>${renderStatus(groupOutcome(group.tests))} <strong>${escapeHtml(basename(group.file))}</strong> · <em>${escapeHtml(group.project)}</em> · <code>🧪 ${counts.all} ${testLabel} · ${renderOutcomeCounts(counts)} · ⏱️ ${formatDuration(duration)}</code></summary>
 
 <br>
 

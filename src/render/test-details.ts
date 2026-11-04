@@ -21,7 +21,7 @@ function renderOutcomeDetails(
 
 	if (count === 0) return '';
 
-	return `<details open>
+	return `<details>
 <summary>${renderTestStatus(outcome)} (${count})</summary>
 
 <br>
@@ -31,7 +31,7 @@ ${matchingGroups.map(renderTestGroup).join('\n<br>\n<br>\n')}
 }
 
 export function renderTestDetails(groups: readonly TestGroup[]): string {
-	const allTests = `<details open>
+	const allTests = `<details>
 <summary>🧪 Show all</summary>
 
 <br>
