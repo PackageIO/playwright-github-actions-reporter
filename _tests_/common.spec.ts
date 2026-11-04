@@ -132,14 +132,14 @@ test('renders filtered sections only for outcomes present in the report', () => 
 	);
 
 	for (const title of [
-		'❌ Show failed only',
+		'❌ Show Failed only',
 		'⚠️ Show Flaky only',
 		'⏭️ Show Skipped only',
 	]) {
 		expect(mixedReport).toContain(`<summary>${title}</summary>`);
 	}
 	const sectionPositions = [
-		'❌ Show failed only',
+		'❌ Show Failed only',
 		'⚠️ Show Flaky only',
 		'⏭️ Show Skipped only',
 		'🧪 Show all',
@@ -156,31 +156,41 @@ test('renders filtered sections only for outcomes present in the report', () => 
 			: undefined;
 		return mixedReport.slice(start, end);
 	};
-	expect(section('❌ Show failed only', '⚠️ Show Flaky only')).toContain(
+	expect(section('❌ Show Failed only', '⚠️ Show Flaky only')).toContain(
 		'failed case',
 	);
-	expect(section('❌ Show failed only', '⚠️ Show Flaky only')).not.toContain(
+	expect(
+		section('❌ Show Failed only', '⚠️ Show Flaky only'),
+	).not.toContain('<summary><span title="Failed">❌</span>');
+	expect(section('❌ Show Failed only', '⚠️ Show Flaky only')).not.toContain(
 		'flaky case',
 	);
 	expect(section('⚠️ Show Flaky only', '⏭️ Show Skipped only')).toContain(
 		'flaky case',
 	);
+	expect(
+		section('⚠️ Show Flaky only', '⏭️ Show Skipped only'),
+	).not.toContain('<summary><span title="Flaky">⚠️</span>');
 	expect(section('⚠️ Show Flaky only', '⏭️ Show Skipped only')).not.toContain(
 		'skipped case',
 	);
 	expect(section('⏭️ Show Skipped only', '🧪 Show all')).toContain(
 		'skipped case',
 	);
+	expect(
+		section('⏭️ Show Skipped only', '🧪 Show all'),
+	).not.toContain('<summary><span title="Skipped">⏭️</span>');
 	expect(section('⏭️ Show Skipped only', '🧪 Show all')).not.toContain(
 		'passed case',
 	);
+	expect(section('🧪 Show all')).toContain('<span title="Failed">❌</span>');
 
 	const passedOnlyReport = createReport([makeTest('expected', 'passed case')], {
 		duration: 1,
 	} as FullResult);
 	expect(passedOnlyReport).toContain('<summary>🧪 Show all</summary>');
 	expect(passedOnlyReport).not.toContain(
-		'<summary>❌ Show failed only</summary>',
+		'<summary>❌ Show Failed only</summary>',
 	);
 	expect(passedOnlyReport).not.toContain(
 		'<summary>⚠️ Show Flaky only</summary>',

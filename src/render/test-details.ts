@@ -6,13 +6,14 @@ type TestOutcome = ReturnType<TestGroup['tests'][number]['outcome']>;
 function renderTestSection(
 	title: string,
 	groups: readonly TestGroup[],
+	showGroupStatus = true,
 ): string {
 	return `<details>
 <summary>${title}</summary>
 
 <br>
 
-${groups.map(renderTestGroup).join('\n')}
+${groups.map((group) => renderTestGroup(group, showGroupStatus)).join('\n')}
 </details>`;
 }
 
@@ -27,18 +28,18 @@ function renderOutcomeSection(
 	});
 
 	return matchingGroups.length > 0
-		? renderTestSection(title, matchingGroups)
+		? renderTestSection(title, matchingGroups, false)
 		: '';
 }
 
 export function renderTestDetails(groups: readonly TestGroup[]): string {
 	const outcomeSections = [
-		renderOutcomeSection(groups, '❌ Show failed only', 'unexpected'),
+		renderOutcomeSection(groups, '❌ Show Failed only', 'unexpected'),
 		renderOutcomeSection(groups, '⚠️ Show Flaky only', 'flaky'),
 		renderOutcomeSection(groups, '⏭️ Show Skipped only', 'skipped'),
 	]
 		.filter(Boolean)
-		.join('\n');
+		.join('\n\n');
 	const allTestsSection = renderTestSection('🧪 Show all', groups);
 
 	return outcomeSections

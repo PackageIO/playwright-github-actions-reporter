@@ -7,7 +7,7 @@ import { renderOutcomeCounts } from './outcome-counts.js';
 import { renderStatus } from './status.js';
 import { renderTestRow } from './test-row.js';
 
-export function renderTestGroup(group: TestGroup): string {
+export function renderTestGroup(group: TestGroup, showStatus = true): string {
 	const counts = countTests(group.tests);
 	const testLabel = counts.all === 1 ? 'test' : 'tests';
 	const duration = sumTestDuration(group.tests);
@@ -15,8 +15,10 @@ export function renderTestGroup(group: TestGroup): string {
 		.map((test) => renderTestRow(test, group.project))
 		.join('\n');
 
+	const status = showStatus ? `${renderStatus(groupOutcome(group.tests))} ` : '';
+
 	return `<details>
-<summary>${renderStatus(groupOutcome(group.tests))} ${escapeHtml(basename(group.file))} · <em>${escapeHtml(group.project)}</em> · <em><code>🧪 ${counts.all} ${testLabel} · ${renderOutcomeCounts(counts)} · ⏱️ ${formatDuration(duration)}</code></em></summary>
+<summary>${status}${escapeHtml(basename(group.file))} · <em>${escapeHtml(group.project)}</em> · <em><code>🧪 ${counts.all} ${testLabel} · ${renderOutcomeCounts(counts)} · ⏱️ ${formatDuration(duration)}</code></em></summary>
 
 <br>
 
@@ -24,6 +26,5 @@ export function renderTestGroup(group: TestGroup): string {
 | --- | --- | ---: | ---: |
 ${rows}
 
----
 </details>`;
 }
