@@ -4,15 +4,6 @@ import { renderTestGroup } from './test-group.js';
 
 const filterableOutcomes = ['unexpected', 'flaky', 'skipped'] as const;
 
-function renderQuotedTestGroups(groups: readonly TestGroup[]): string {
-	return groups
-		.map(renderTestGroup)
-		.join('\n<br>\n')
-		.split('\n')
-		.map((line) => (line ? `> ${line}` : '>'))
-		.join('\n');
-}
-
 function renderOutcomeDetails(
 	groups: readonly TestGroup[],
 	outcome: (typeof filterableOutcomes)[number],
@@ -35,7 +26,7 @@ function renderOutcomeDetails(
 
 <br>
 
-${renderQuotedTestGroups(matchingGroups)}
+${matchingGroups.map(renderTestGroup).join('\n<br>\n')}
 </details>`;
 }
 
@@ -45,7 +36,7 @@ export function renderTestDetails(groups: readonly TestGroup[]): string {
 
 <br>
 
-${renderQuotedTestGroups(groups)}
+${groups.map(renderTestGroup).join('\n<br>\n')}
 </details>`;
 	const outcomeDetails = filterableOutcomes
 		.map((outcome) => renderOutcomeDetails(groups, outcome))
