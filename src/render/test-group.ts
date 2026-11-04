@@ -24,5 +24,6 @@ export function renderTestGroup(group: TestGroup): string {
 | --- | --- | ---: | ---: |
 ${rows}
 
+---
 </details>`;
 }

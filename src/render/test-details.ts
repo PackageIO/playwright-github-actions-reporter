@@ -39,7 +39,7 @@ export function renderTestDetails(groups: readonly TestGroup[]): string {
 	]
 		.filter(Boolean)
 		.join('\n');
-	const allTestsSection = renderTestSection('🧪 Show test all', groups);
+	const allTestsSection = renderTestSection('🧪 Show all', groups);
 
 	return outcomeSections
 		? `${outcomeSections}\n\n${allTestsSection}`
