@@ -48,7 +48,7 @@ test('shows emojis only for nonzero outcomes in the overall summary', () => {
 	const report = createReport(tests, { duration: 21 } as FullResult);
 
 	expect(report).toContain(
-		'## Playwright test results:\n\n🧪 7 tests · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped · ⏱️ Duration: 21ms',
+		'## 🎭Playwright test results:\n\n🧪 7 tests · ✅ 5 passed · ⚠️ 1 flaky · ⏭️ 1 skipped · ⏱️ Duration: 21ms',
 	);
 	expect(report).not.toContain('Failed: 0');
 	expect(report).not.toContain('✅ Passed:');
@@ -78,7 +78,7 @@ test('renders grouped test rows with italic code counts and duration', () => {
 	} as unknown as TestCase;
 	const report = createReport([testCase], { duration: 5354 } as FullResult);
 
-	expect(report).toContain('## Playwright test results:');
+	expect(report).toContain('## 🎭Playwright test results:');
 	expect(report).toContain('🧪 1 test · ✅ 1 passed · ⏱️ Duration: 5s');
 	expect(report).toMatch(
 		/Generated \d{4}-\d{2}-\d{2} at \d{2}:\d{2}:\d{2}/,
@@ -86,7 +86,10 @@ test('renders grouped test rows with italic code counts and duration', () => {
 	expect(report).toMatch(/\*\n\n---/);
 	expect(report).toContain('| Status | Test | Retries | Duration |');
 	expect(report).toContain(
-		'<summary><strong><span title="Passed">✅</span> storageState.spec.ts</strong> · <em>linux / storageState</em> · <em><code>✅ 1 passed · ⏱️ 5s</code></em></summary>',
+		'<summary><span title="Passed">✅</span> storageState.spec.ts · <em>linux / storageState</em> · <em><code>🧪 1 test · ✅ 1 passed · ⏱️ 5s</code></em></summary>',
+	);
+	expect(report).toContain(
+		'<details>\n<summary>🧪 Show all</summary>\n\n<br>\n\n<details>',
 	);
 	expect(report).toContain(
 		'</summary>\n\n<br>\n\n| Status | Test | Retries | Duration |',
@@ -273,5 +276,5 @@ test('prints its package name and version when the run begins', () => {
 		process.stdout.write = originalWrite;
 	}
 
-	expect(output).toBe(`${packageMetadata.name} v${packageMetadata.version}\n`);
+	expect(output).toBe(`Using ${packageMetadata.name} v${packageMetadata.version}\n`);
 });

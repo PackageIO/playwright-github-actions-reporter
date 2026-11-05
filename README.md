@@ -57,10 +57,10 @@ No additional workflow permissions or reporter-specific action steps are needed.
 
 - An overall summary line with the total test count, counts for passed, failed, flaky, and skipped tests, and the run duration. Outcome counts are shown only when nonzero.
 - Per-file outcome counts and duration, with counts and duration styled as italic inline code.
+- Collapsible file groups organized by Playwright project, each showing a grouped summary and details table.
 - Retry count and duration for each test. Duration includes all attempts.
 - Playwright tags, such as `@smoke` (shown as `smoke`).
 - Test annotations and collapsible error details, including errors from retries.
-- File groups organized by Playwright project.
 
 The reporter prints its package name and version when a test run starts. Outside GitHub Actions, it does not write a summary file; run it locally to see the usual Playwright reporter output.
 

@@ -13,7 +13,7 @@ export function renderHeader(
 	const generatedAt = formatDateTime(new Date()).replace('/', ' at ');
 
 	return `
-## Playwright test results:
+## 🎭Playwright test results:
 
 🧪 ${counts.all} ${totalLabel} · ${renderOutcomeCounts(counts)} · ⏱️ Duration: ${formatDuration(runResult.duration)}
 
